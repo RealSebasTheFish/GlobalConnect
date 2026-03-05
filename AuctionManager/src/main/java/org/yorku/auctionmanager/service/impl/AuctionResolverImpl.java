@@ -5,9 +5,9 @@ import org.springframework.stereotype.Service;
 import org.yorku.auctionmanager.service.AuctionResolver;
 import org.yorku.auctionmanager.service.AuctionDatabaseManager;
 import org.yorku.auctionmanager.service.AuctionUpdatesPublisher;
-import org.yorku.auctionmanager.dto.AuthenticatedRequest;
-import org.yorku.auctionmanager.dto.AuctionResolverResponse;
+import org.yorku.auctionmanager.dto.*;
 import org.yorku.auctionmanager.model.*;
+import org.yorku.auctionmanager.service.*;
 
 @Service
 public class AuctionResolverImpl implements AuctionResolver {
@@ -21,10 +21,13 @@ public class AuctionResolverImpl implements AuctionResolver {
     @Override
     public AuctionResolverResponse placeBid(AuthenticatedRequest request) {
         try {
-            // 1. Extract the payload from the authenticated request
-            // (Assuming your AuthenticatedRequest has a method to get the payload/Item/Bid data)
-            int targetItemId = request.getTargetItemId(); 
-            double bidAmount = request.getPayloadBidAmount();
+            // 1. CAST the generic request to a specific BidRequest
+            BidRequest bidPayload = (BidRequest) request.getRequest();
+            
+            // Now you can safely get the specific data!
+            int targetItemId = bidPayload.getTargetItemId(); 
+            double bidAmount = bidPayload.getBidAmount();
+            int accountUID = request.getAccountUID();
 
             // 2. Fetch the current item state from the database
             // Note: You might need a specific fetchItemById method in your DB Manager, 

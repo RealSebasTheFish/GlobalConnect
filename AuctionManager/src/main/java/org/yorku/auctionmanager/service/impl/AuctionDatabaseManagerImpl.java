@@ -4,8 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.yorku.auctionmanager.service.AuctionDatabaseManager;
 import org.yorku.auctionmanager.repository.AuctionDAO;
-import org.yorku.auctionmanager.dto.AuthenticatedRequest;
-import org.yorku.auctionmanager.dto.AuctionDatabaseResponse;
+import org.yorku.auctionmanager.dto.*;
 import org.yorku.auctionmanager.model.Item;
 import org.yorku.auctionmanager.model.AuctionUpdate;
 
@@ -33,8 +32,12 @@ public class AuctionDatabaseManagerImpl implements AuctionDatabaseManager {
     @Override
     public AuctionDatabaseResponse addItem(AuthenticatedRequest request) {
         try {
-            // Extract the item from the generic payload
-            Item newItem = (Item) request.getRequestPayload();
+        	// Cast to the specific ItemRequest
+            ItemRequest itemPayload = (ItemRequest) request.getRequest();
+            // Extract the Item from the payload
+            Item newItem = itemPayload.getItem();
+            
+            int accountUID = request.getAccountUID();
             
             // Validate the item data (Error Code 10)
             if (newItem.getName() == null || newItem.getName().trim().isEmpty() || newItem.getStartingPrice() < 0) {
@@ -62,7 +65,11 @@ public class AuctionDatabaseManagerImpl implements AuctionDatabaseManager {
     @Override
     public AuctionDatabaseResponse removeItem(AuthenticatedRequest request) {
         try {
-            Integer itemIdToRemove = (Integer) request.getRequestPayload();
+        	// Cast to the specific ItemIdRequest
+            ItemIdRequest idPayload = (ItemIdRequest) request.getRequest();
+            // Extract the ID
+            int itemIdToRemove = idPayload.getItemId();
+            
             int requestingUserId = request.getAccountUID();
 
             // 1. Fetch the item first (fetchItemById in the DAO!)
@@ -95,8 +102,10 @@ public class AuctionDatabaseManagerImpl implements AuctionDatabaseManager {
     @Override
     public AuctionDatabaseResponse modifyItem(AuthenticatedRequest request) {
         try {
-            // 1. Extract the new item data and the user making the request
-            Item modifiedItemData = (Item) request.getRequestPayload();
+        	// Cast to the specific ItemRequest
+            ItemRequest itemPayload = (ItemRequest) request.getRequest();
+            // Extract the Item from the payload
+            Item modifiedItemData = itemPayload.getItem();
             int requestingUserId = request.getAccountUID();
 
             // 2. Fetch the current item from the database
