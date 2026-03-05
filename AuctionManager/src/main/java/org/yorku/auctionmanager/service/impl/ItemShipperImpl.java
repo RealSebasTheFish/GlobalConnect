@@ -4,8 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.yorku.auctionmanager.service.ItemShipper;
 import org.yorku.auctionmanager.service.AuctionUpdatesPublisher;
-import org.yorku.auctionmanager.dto.AuthenticatedRequest;
-import org.yorku.auctionmanager.dto.ItemShipperResponse;
+import org.yorku.auctionmanager.dto.*;
 import org.yorku.auctionmanager.model.*;
 // Assuming we will have a client/proxy interface to talk to the Payment Component
 import org.yorku.auctionmanager.client.PaymentVerifierClient; 
@@ -22,9 +21,12 @@ public class ItemShipperImpl implements ItemShipper {
     @Override
     public ItemShipperResponse shipItem(AuthenticatedRequest request) {
         try {
-            Item targetItem = request.getTargetItem();
+            // CAST the generic request to a specific ShipRequest
+            ShipRequest shipPayload = (ShipRequest) request.getRequest();
+            
+            Item targetItem = shipPayload.getTargetItem();
+            String shippingAddress = shipPayload.getShippingAddress();
             int accountUID = request.getAccountUID();
-            String shippingAddress = request.getShippingAddress();
 
             // 1. Check Error Code 13: Invalid Shipping Address
             if (shippingAddress == null || shippingAddress.trim().isEmpty() || !isValidAddress(shippingAddress)) {
