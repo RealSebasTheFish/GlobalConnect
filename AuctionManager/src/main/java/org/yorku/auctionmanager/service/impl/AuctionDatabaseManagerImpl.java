@@ -62,24 +62,31 @@ public class AuctionDatabaseManagerImpl implements AuctionDatabaseManager {
     @Override
     public AuctionDatabaseResponse removeItem(AuthenticatedRequest request) {
         try {
-            // Assuming the payload for a remove request is just the Integer ID of the item
             Integer itemIdToRemove = (Integer) request.getRequestPayload();
             int requestingUserId = request.getAccountUID();
 
-            // Note: To perfectly distinguish between Error 11 (Not Found) and Error 16 (Permission Denied),
-            // you would ideally fetch the item first to check its owner.
-            // Item targetItem = auctionDAO.fetchItemById(itemIdToRemove);
-            // if (targetItem == null) return new AuctionDatabaseResponse(11, "Item not found", emptyList);
-            // if (targetItem.getOwnerUid() != requestingUserId) return new AuctionDatabaseResponse(16, "Permission Denied", emptyList);
+            // 1. Fetch the item first (fetchItemById in the DAO!)
+            Item targetItem = auctionDAO.fetchItemById(itemIdToRemove);
 
+            // 2. Check for Error 11: Item Not Found
+            if (targetItem == null) {
+                return new AuctionDatabaseResponse(11, "Item not found", new ArrayList<>());
+            }
+
+            // 3. Check for Error 16: Permission Denied
+            if (targetItem.getOwnerUid() != requestingUserId) {
+                return new AuctionDatabaseResponse(16, "Permission Denied: You do not own this item", new ArrayList<>());
+            }
+
+            // 4. If it exists and they own it, perform the delete!
             boolean isDeleted = auctionDAO.deleteItem(itemIdToRemove, requestingUserId);
             
             if (isDeleted) {
                 return new AuctionDatabaseResponse(0, "Item removed successfully", new ArrayList<>());
             } else {
-                // If the delete failed, it's either not found or the user doesn't own it
-                return new AuctionDatabaseResponse(11, "Item not found or Permission Denied", new ArrayList<>());
+                return new AuctionDatabaseResponse(2, "Database Error during deletion", new ArrayList<>());
             }
+
         } catch (Exception e) {
             return new AuctionDatabaseResponse(2, "Internal Server Error", new ArrayList<>());
         }
@@ -87,12 +94,44 @@ public class AuctionDatabaseManagerImpl implements AuctionDatabaseManager {
 
     @Override
     public AuctionDatabaseResponse modifyItem(AuthenticatedRequest request) {
-        // Similar to addItem and removeItem combined:
-        // 1. Extract Item from payload.
-        // 2. Fetch existing item from DB (check if exists -> Error 11).
-        // 3. Check if existingItem.getOwnerUid() == request.getAccountUID() (check permission -> Error 16).
-        // 4. Update in DB and return list of length 1.
-        return new AuctionDatabaseResponse(0, "Stubbed method", new ArrayList<>());
+        try {
+            // 1. Extract the new item data and the user making the request
+            Item modifiedItemData = (Item) request.getRequestPayload();
+            int requestingUserId = request.getAccountUID();
+
+            // 2. Fetch the current item from the database
+            Item existingItem = auctionDAO.fetchItemById(modifiedItemData.getId());
+
+            // 3. Check for Error 11: Item Not Found
+            if (existingItem == null) {
+                return new AuctionDatabaseResponse(11, "Item not found", new ArrayList<>());
+            }
+
+            // 4. Check for Error 16: Permission Denied (Only the owner can modify)
+            if (existingItem.getOwnerUid() != requestingUserId) {
+                return new AuctionDatabaseResponse(16, "Permission Denied: You do not own this item", new ArrayList<>());
+            }
+
+            // 5. Apply the allowed modifications (e.g., updating name and description)
+            existingItem.setName(modifiedItemData.getName());
+            existingItem.setDescription(modifiedItemData.getDescription());
+            // Note: We intentionally don't overwrite current bids or bidder IDs here!
+
+            // 6. Save the updated item back to the database
+            boolean isUpdated = auctionDAO.updateItem(existingItem);
+            
+            if (isUpdated) {
+                // Return a list of length 1 with the modified item as required by your SDD
+                return new AuctionDatabaseResponse(0, "Item modified successfully", Collections.singletonList(existingItem));
+            } else {
+                return new AuctionDatabaseResponse(2, "Database Error during modification", new ArrayList<>());
+            }
+
+        } catch (ClassCastException e) {
+            return new AuctionDatabaseResponse(10, "Invalid Payload Format", new ArrayList<>());
+        } catch (Exception e) {
+            return new AuctionDatabaseResponse(2, "Internal Server Error: " + e.getMessage(), new ArrayList<>());
+        }
     }
 
     @Override
@@ -100,19 +139,47 @@ public class AuctionDatabaseManagerImpl implements AuctionDatabaseManager {
         // 1. Get the accountUID from the request.
         // 2. Query the DB for items where owner_uid == accountUID.
         // 3. Return the list.
-        return new AuctionDatabaseResponse(0, "Stubbed method", new ArrayList<>());
+    	try {
+            int accountUID = request.getAccountUID();
+            
+            // Use DAO method!
+            List<Item> myItems = auctionDAO.fetchItemsByOwner(accountUID);
+            
+            return new AuctionDatabaseResponse(0, "User items retrieved successfully", myItems);
+        } catch (Exception e) {
+            return new AuctionDatabaseResponse(2, "Internal Server Error", new ArrayList<>());
+        }
     }
 
     @Override
     public AuctionDatabaseResponse pushAuctionUpdate(AuctionUpdate auctionUpdate) {
         try {
-            // 1. Extract data from the auctionUpdate model
-            // 2. Update the item's current highest bid and highest bidder in the database
-            // auctionDAO.updateItemBids(auctionUpdate.getItemId(), auctionUpdate.getNewBidAmount(), ...);
-            
-            return new AuctionDatabaseResponse(0, "Auction state updated", new ArrayList<>());
+            // 1. Find the item being updated
+            Item existingItem = auctionDAO.fetchItemById(auctionUpdate.getItemId());
+
+            if (existingItem == null) {
+                // The item disappeared (this shouldn't happen, but we handle it safely)
+                return new AuctionDatabaseResponse(2, "Item not found for update", new ArrayList<>());
+            }
+
+            // 2. Apply the live auction updates to our item
+            existingItem.setCurrentHighestBid(auctionUpdate.getNewBidAmount());
+            existingItem.setHighestBidderUid(auctionUpdate.getNewHighestBidderUid());
+            existingItem.setClosed(auctionUpdate.isAuctionEnding());
+
+            // 3. Persist the new state to the database
+            boolean isUpdated = auctionDAO.updateItem(existingItem);
+
+            if (isUpdated) {
+                // SDD specifies returning error code 0 on success
+                return new AuctionDatabaseResponse(0, "Auction state updated successfully", new ArrayList<>());
+            } else {
+                return new AuctionDatabaseResponse(2, "Failed to update auction state in DB", new ArrayList<>());
+            }
+
         } catch (Exception e) {
-            return new AuctionDatabaseResponse(2, "Internal System Error", new ArrayList<>());
+            // Error code 2: Internal System Error
+            return new AuctionDatabaseResponse(2, "Internal System Error: " + e.getMessage(), new ArrayList<>());
         }
     }
 }

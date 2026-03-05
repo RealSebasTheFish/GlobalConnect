@@ -22,21 +22,68 @@ public class Item {
         this.isClosed = false;
     }
 
-    // Getters and Setters...
-    public int getId() { return id; }
-    public void setId(int id) { this.id = id; }
-    public int getOwnerUid() { return ownerUid; }
-    public void setOwnerUid(int ownerUid) { this.ownerUid = ownerUid; }
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
-    public String getDescription() { return description; }
-    public void setDescription(String description) { this.description = description; }
-    public double getStartingPrice() { return startingPrice; }
-    public void setStartingPrice(double startingPrice) { this.startingPrice = startingPrice; }
-    public double getCurrentHighestBid() { return currentHighestBid; }
-    public void setCurrentHighestBid(double currentHighestBid) { this.currentHighestBid = currentHighestBid; }
-    public int getHighestBidderUid() { return highestBidderUid; }
-    public void setHighestBidderUid(int highestBidderUid) { this.highestBidderUid = highestBidderUid; }
-    public boolean isClosed() { return isClosed; }
-    public void setClosed(boolean closed) { isClosed = closed; }
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public int getOwnerUid() {
+		return ownerUid;
+	}
+
+	public void setOwnerUid(int ownerUid) {
+		this.ownerUid = ownerUid;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public double getStartingPrice() {
+		return startingPrice;
+	}
+
+	public void setStartingPrice(double startingPrice) {
+		this.startingPrice = startingPrice;
+	}
+
+	public double getCurrentHighestBid() {
+		return currentHighestBid;
+	}
+
+	public void setCurrentHighestBid(double currentHighestBid) {
+		this.currentHighestBid = currentHighestBid;
+	}
+
+	public int getHighestBidderUid() {
+		return highestBidderUid;
+	}
+
+	public void setHighestBidderUid(int highestBidderUid) {
+		this.highestBidderUid = highestBidderUid;
+	}
+
+	public boolean isClosed() {
+		return isClosed;
+	}
+
+	public void setClosed(boolean isClosed) {
+		this.isClosed = isClosed;
+	}
+    
 }

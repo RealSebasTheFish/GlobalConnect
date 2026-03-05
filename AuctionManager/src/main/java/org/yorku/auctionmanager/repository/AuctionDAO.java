@@ -8,13 +8,14 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.List;
 
 @Repository
 public class AuctionDAO {
     
-    // Example JDBC connection string for SQLite
-    private static final String DB_URL = "jdbc:sqlite:auction_system.db";
+    // Just the file name. No absolute paths, no ::resource:: tags.
+    private static final String DB_URL = "jdbc:sqlite:auction_db.db";
 
     public Item insertItem(Item item) {
         // Note we include all the fields now
@@ -48,10 +49,25 @@ public class AuctionDAO {
         }
     }
 
-	public List<Item> fetchAllItems() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    public List<Item> fetchAllItems() {
+        List<Item> catalogue = new ArrayList<>();
+        // We only fetch items where is_closed = 0 (meaning the auction is still active)
+        String sql = "SELECT * FROM items WHERE is_closed = 0";
+        
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+            
+            // Loop through every row and convert it to an Item
+            while (rs.next()) {
+                catalogue.add(mapRowToItem(rs));
+            }
+        } catch (SQLException e) {
+            System.out.println("Error fetching catalogue: " + e.getMessage());
+        }
+        
+        return catalogue;
+    }
 	
 	public boolean deleteItem(int itemId, int ownerUid) {
 	    // We include owner_uid in the WHERE clause as a strict security measure
@@ -78,4 +94,100 @@ public class AuctionDAO {
 	}
 
     // I will add updateItem, findById, and findAll methods here
+	public Item fetchItemById(int itemId) {
+        String sql = "SELECT * FROM items WHERE id = ?";
+        
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
+            pstmt.setInt(1, itemId);
+            
+            try (ResultSet rs = pstmt.executeQuery()) {
+                // If a row is found, map it to an Item object and return it
+                if (rs.next()) {
+                    return mapRowToItem(rs);
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Error fetching item by ID: " + e.getMessage());
+        }
+        
+        // Return null if the item doesn't exist or an error occurred
+        return null; 
+    }
+	// Helper method to convert a database row into a Java Object
+    private Item mapRowToItem(ResultSet rs) throws SQLException {
+        Item item = new Item();
+        item.setId(rs.getInt("id"));
+        item.setOwnerUid(rs.getInt("owner_uid"));
+        item.setName(rs.getString("name"));
+        item.setDescription(rs.getString("description"));
+        item.setStartingPrice(rs.getDouble("starting_price"));
+        item.setCurrentHighestBid(rs.getDouble("current_highest_bid"));
+        item.setHighestBidderUid(rs.getInt("highest_bidder_uid"));
+        
+        // SQLite doesn't have a strict boolean, so we read 1 as true, 0 as false
+        item.setClosed(rs.getInt("is_closed") == 1); 
+        
+        return item;
+    }
+    
+    public List<Item> fetchItemsByOwner(int ownerUid) {
+        List<Item> userItems = new ArrayList<>();
+        String sql = "SELECT * FROM items WHERE owner_uid = ?";
+        
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
+            pstmt.setInt(1, ownerUid);
+            
+            try (ResultSet rs = pstmt.executeQuery()) {
+                // Loop through all results and add them to the list
+                while (rs.next()) {
+                    userItems.add(mapRowToItem(rs));
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Error fetching user's items: " + e.getMessage());
+        }
+        
+        return userItems;
+    }
+    
+    public boolean updateItem(Item item) {
+        // We update all modifiable fields based on the item's ID
+        String sql = "UPDATE items SET name = ?, description = ?, starting_price = ?, " +
+                     "current_highest_bid = ?, highest_bidder_uid = ?, is_closed = ? " +
+                     "WHERE id = ?";
+                     
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
+            pstmt.setString(1, item.getName());
+            pstmt.setString(2, item.getDescription());
+            pstmt.setDouble(3, item.getStartingPrice());
+            pstmt.setDouble(4, item.getCurrentHighestBid());
+            pstmt.setInt(5, item.getHighestBidderUid());
+            
+            // SQLite doesn't have a strict boolean type, so we store 1 for true, 0 for false
+            pstmt.setInt(6, item.isClosed() ? 1 : 0); 
+            
+            pstmt.setInt(7, item.getId()); // The WHERE clause ID
+            
+            int rowsAffected = pstmt.executeUpdate();
+            return rowsAffected > 0;
+            
+        } catch (SQLException e) {
+            System.out.println("Error updating item: " + e.getMessage());
+            return false;
+        }
+    }
 }
+
+
+
+
+
+
+
+
