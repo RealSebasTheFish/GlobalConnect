@@ -2,7 +2,11 @@ package org.yorku.auctionmanager.model;
 
 public class AuctionUpdate {
     private int itemId;
-    private double newBidAmount;
+    public int getItemId() {
+		return itemId;
+	}
+
+	private double newBidAmount;
     private int newHighestBidderUid;
     private boolean isAuctionEnding;
 
@@ -12,6 +16,34 @@ public class AuctionUpdate {
         this.newHighestBidderUid = newHighestBidderUid;
         this.isAuctionEnding = isAuctionEnding;
     }
+    
+    public void setItemId(int itemId) {
+		this.itemId = itemId;
+	}
 
-    // Getters and Setters...
+	public double getNewBidAmount() {
+		return newBidAmount;
+	}
+
+	public void setNewBidAmount(double newBidAmount) {
+		this.newBidAmount = newBidAmount;
+	}
+
+	public int getNewHighestBidderUid() {
+		return newHighestBidderUid;
+	}
+
+	public void setNewHighestBidderUid(int newHighestBidderUid) {
+		this.newHighestBidderUid = newHighestBidderUid;
+	}
+
+	public boolean isAuctionEnding() {
+		return isAuctionEnding;
+	}
+
+	public void setAuctionEnding(boolean isAuctionEnding) {
+		this.isAuctionEnding = isAuctionEnding;
+	}
+
+    
 }
