@@ -2,54 +2,59 @@ package org.yorku.auctionmanager.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import org.yorku.auctionmanager.service.*;
 import org.yorku.auctionmanager.dto.*;
+import org.yorku.auctionmanager.service.AuctionDatabaseManager;
+import org.yorku.auctionmanager.service.AuctionResolver;
+import org.yorku.auctionmanager.service.ItemShipper;
+
+//Provisional Implementation to test curl endpoints 
 
 @RestController
+@RequestMapping("/api/auction")
 public class AuctionController {
 
-    //Suggested controller implementation:
-	/*@Autowired
-    private AuctionDatabaseManager auctionDatabaseManager;
-
     @Autowired
-    private ItemShipper itemShipper;
+    private AuctionDatabaseManager dbManager;
 
     @Autowired
     private AuctionResolver auctionResolver;
 
-    @GetMapping("/fetchcatalogue")
-    public AuctionDatabaseResponse fetchCatalogue() {
-        return auctionDatabaseManager.fetchCatalogue();
+    @Autowired
+    private ItemShipper itemShipper;
+
+    // GET /api/auction/catalogue
+    @GetMapping("/catalogue")
+    public AuctionDatabaseResponse getCatalogue() {
+        return dbManager.fetchCatalogue();
     }
 
-    @PostMapping("/additem")
+    // POST /api/auction/item
+    @PostMapping("/item")
     public AuctionDatabaseResponse addItem(@RequestBody AuthenticatedRequest request) {
-        return auctionDatabaseManager.addItem(request);
+        return dbManager.addItem(request);
     }
 
-    @DeleteMapping("/removeitem")
-    public AuctionDatabaseResponse removeItem(@RequestBody AuthenticatedRequest request) {
-        return auctionDatabaseManager.removeItem(request);
-    }
-
-    @PutMapping("/modifyitem")
+    // PUT /api/auction/item
+    @PutMapping("/item")
     public AuctionDatabaseResponse modifyItem(@RequestBody AuthenticatedRequest request) {
-        return auctionDatabaseManager.modifyItem(request);
+        return dbManager.modifyItem(request);
     }
 
-    @PostMapping("/fetchitems")
-    public AuctionDatabaseResponse fetchUserItems(@RequestBody AuthenticatedRequest request) {
-        return auctionDatabaseManager.fetchUserItems(request);
+    // DELETE /api/auction/item
+    @DeleteMapping("/item")
+    public AuctionDatabaseResponse removeItem(@RequestBody AuthenticatedRequest request) {
+        return dbManager.removeItem(request);
     }
 
+    // POST /api/auction/bid
+    @PostMapping("/bid")
+    public AuctionResolverResponse placeBid(@RequestBody AuthenticatedRequest request) {
+        return auctionResolver.placeBid(request);
+    }
+
+    // POST /api/auction/ship
     @PostMapping("/ship")
     public ItemShipperResponse shipItem(@RequestBody AuthenticatedRequest request) {
         return itemShipper.shipItem(request);
     }
-
-    @PostMapping("/bid")
-    public AuctionResolverResponse placeBid(@RequestBody AuthenticatedRequest request) {
-        return auctionResolver.placeBid(request);
-    }*/
 }
