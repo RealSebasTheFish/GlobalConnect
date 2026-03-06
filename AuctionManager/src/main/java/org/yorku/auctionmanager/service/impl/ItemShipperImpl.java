@@ -27,7 +27,7 @@ public class ItemShipperImpl implements ItemShipper {
             ShipRequest shipPayload = (ShipRequest) request.getRequest();
             Item targetItem = shipPayload.getTargetItem();
             String shippingAddress = shipPayload.getShippingAddress();
-            int accountUID = request.getAccountUID();
+            int accountUID = request.getAccountUID(); // This is the SELLER
 
             if (shippingAddress == null || shippingAddress.trim().isEmpty() || !isValidAddress(shippingAddress)) {
                 return new ItemShipperResponse(13, "Invalid Shipping Address");
@@ -41,11 +41,21 @@ public class ItemShipperImpl implements ItemShipper {
                 return new ItemShipperResponse(16, "Permission Denied: Only the owner can ship this item");
             }
 
-            // MOCK Cross-Component Call (We will fix this next!)
-            int paymentStatus = paymentVerifier.verifyPayment(dbItem, accountUID);
-            if (paymentStatus != 0) {
+            // Get the BUYER's ID
+            int buyerUid = dbItem.getHighestBidderUid();
+            if (buyerUid <= 0) {
+                return new ItemShipperResponse(14, "Item has no valid buyer");
+            }
+
+            // REAL Cross-Component Call: Check if the BUYER has a receipt for this item
+            boolean isPaid = paymentVerifier.verifyPayment(dbItem.getId(), buyerUid);
+            if (!isPaid) {
                 return new ItemShipperResponse(12, "Item Not Paid or Verification Failed");
             }
+
+            // Close the item in the database now that it's shipped
+            dbItem.setClosed(true);
+            auctionDAO.updateItem(dbItem);
 
             publisher.receiveShipUpdate();
 
