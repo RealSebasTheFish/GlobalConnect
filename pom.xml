@@ -18,7 +18,8 @@
 
   <modules>
     <module>AuctionManager</module>
+    <module>AccountManager</module>
     <module>PaymentHandler</module>
-    </modules>
+   </modules>
 
 </project>
