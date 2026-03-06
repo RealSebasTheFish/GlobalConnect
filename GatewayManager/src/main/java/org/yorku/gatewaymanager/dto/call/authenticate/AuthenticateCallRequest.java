@@ -1,15 +1,10 @@
 package org.yorku.gatewaymanager.dto.call.authenticate;
 
-
-import org.yorku.gatewaymanager.dto.common.Request;
-
-
-public class AuthenticateCallRequest extends Request {
+public class AuthenticateCallRequest {
     private String sessionToken;
-    private Request request;
+    private AuthenticateEmbeddedRequest request;
 
     public AuthenticateCallRequest() {
-        super("AuthenticateCallRequest");
     }
 
     public String getSessionToken() {
@@ -20,12 +15,11 @@ public class AuthenticateCallRequest extends Request {
         this.sessionToken = sessionToken;
     }
 
-    public Request getRequest() {
+    public AuthenticateEmbeddedRequest getRequest() {
         return request;
     }
 
-    public void setRequest(Request request) {
+    public void setRequest(AuthenticateEmbeddedRequest request) {
         this.request = request;
     }
-
 }
