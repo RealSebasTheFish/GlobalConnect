@@ -18,7 +18,7 @@ public class AuctionDAO {
     private static final String DB_URL = "jdbc:sqlite:auction_db.db";
 
     public Item insertItem(Item item) {
-        // Note we include all the fields now
+        // Note we include all the fields
         String sql = "INSERT INTO items(owner_uid, name, description, starting_price, current_highest_bid, highest_bidder_uid, is_closed) VALUES(?,?,?,?,?,?,?)";
         
         try (Connection conn = DriverManager.getConnection(DB_URL);
@@ -93,7 +93,7 @@ public class AuctionDAO {
 	    }
 	}
 
-    // I will add updateItem, findById, and findAll methods here
+    
 	public Item fetchItemById(int itemId) {
         String sql = "SELECT * FROM items WHERE id = ?";
         
