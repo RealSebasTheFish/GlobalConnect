@@ -108,6 +108,11 @@ local.properties
 
 .Trashes
 
+# SQLite DB files
+*.db
+*.sqlite
+*.sqlite3
+
 ehthumbs.db
 
 Thumbs.db
