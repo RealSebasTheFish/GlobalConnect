@@ -1,0 +1,120 @@
+
+# ==========================================
+# AccountManager Main Flow Script
+# UC1
+# ==========================================
+
+Main Flow – UC1 Sign Up and Sign In
+
+The main flow of the AccountManager service demonstrates the user authentication lifecycle for the system. First, a new user creates an account using the /signup endpoint by providing their username, password, personal information, and address. After successful registration, the user logs in through the /login endpoint using their accountUID and password, which returns a session token. This session token is then validated using the /authenticate endpoint, which generates an authenticated request containing a secret used for secure communication with other services. The /fetchaccount endpoint allows retrieval of the user’s account information using the authenticated request. If the user forgets their password, they can request a rescue code using /forgotpassword/request, which generates a temporary reset code. Finally, the user resets their password using /forgotpassword and can log in again using the new password. This sequence demonstrates the complete authentication and account management flow implemented in the AccountManager service.
+
+1. Signup
+
+curl -X POST http://localhost:8081/signup \
+-H "Content-Type: application/json" \
+-d '{
+  "username":"demo_user",
+  "password":"1234",
+  "email":"demo@test.com",
+  "firstName":"Demo",
+  "lastName":"User",
+  "streetName":"Main",
+  "streetNumber":"1",
+  "city":"Toronto",
+  "country":"Canada",
+  "postalCode":"M1M"
+}'
+
+Expected:
+errorCode = 0
+accountUID returned
+
+
+2. Login
+
+curl -X POST http://localhost:8081/login \
+-H "Content-Type: application/json" \
+-d '{
+  "accountUID":1,
+  "password":"1234"
+}'
+
+Expected:
+errorCode = 0
+sessionToken returned
+
+
+3. Authenticate Session
+
+
+curl -X POST http://localhost:8081/authenticate \
+-H "Content-Type: application/json" \
+-d '{
+  "sessionToken":"PUT_SESSION_TOKEN_HERE",
+  "request":{"accountUID":1}
+}'
+
+Expected Result:
+errorCode = 0
+Response contains authenticatedRequest and secret
+
+
+4. Fetch Account
+
+
+curl -X POST http://localhost:8081/fetchaccount \
+-H "Content-Type: application/json" \
+-d '{
+  "secret":"PUT_SECRET_HERE",
+  "request":{"accountUID":1}
+}'
+
+Expected Result:
+errorCode = 0
+Response contains account information
+
+
+5. Forgot Password
+
+
+curl -X POST http://localhost:8081/forgotpassword/request \
+-H "Content-Type: application/json" \
+-d '{
+  "accountUID":1
+}'
+
+Expected Result:
+errorCode = 0
+Response contains rescueCode
+
+
+
+6. Reset Password
+
+
+
+curl -X POST http://localhost:8081/forgotpassword \
+-H "Content-Type: application/json" \
+-d '{
+  "accountUID":1,
+  "forgotPasswordRescueCode":"PUT_RESCUE_CODE_HERE",
+  "newPassword":"new123"
+}'
+
+Expected Result:
+errorCode = 0
+
+
+7. LOGIN WITH NEW PASSWORD
+
+
+curl -X POST http://localhost:8081/login \
+-H "Content-Type: application/json" \
+-d '{
+  "accountUID":1,
+  "password":"new123"
+}'
+
+Expected Result:
+errorCode = 0
+Response contains sessionToken

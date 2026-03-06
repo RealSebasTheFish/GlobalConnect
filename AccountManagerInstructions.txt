@@ -1,0 +1,18 @@
+AccountManager Test Instructions
+
+1. Open the AccountManager project in Eclipse.
+2. Run AccountManagerApplication.java as a Java Application.
+3. Confirm the service starts on http://localhost:8081
+4. Use the provided script files:
+ 
+
+5. For the scripts:
+   - After signup, copy the returned accountUID and replace it in later commands.
+   - After login, copy the returned sessionToken and replace it in the authenticate command.
+   - After authenticate, copy the returned secret and replace it in the fetchaccount command.
+   - After forgotpassword/request, copy the returned rescueCode and replace it in the forgotpassword command.
+
+6. If the database already contains old test data:
+   - Use a new username for signup, or
+   - Stop the service, delete accountmanager.db, and restart the application.
+

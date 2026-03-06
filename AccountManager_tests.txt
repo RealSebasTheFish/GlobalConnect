@@ -1,0 +1,204 @@
+# AccountManager Comprehensive Test Cases
+
+BASE_URL="http://localhost:8081"
+
+"=========================================="
+
+
+# Test 1: Valid Signup
+#  Expected: errorCode 0 
+#  Copy returned accountUID for later tests	
+
+ curl -s -X POST "http://localhost:8081/signup" \
+-H "Content-Type: application/json" \
+-d '{
+  "username":"groot_test_a",
+  "password":"1234",
+  "email":"groot_test_a@test.com",
+  "firstName":"G",
+  "lastName":"Root",
+  "streetName":"Main",
+  "streetNumber":"1",
+  "city":"Brampton",
+  "country":"Canada",
+  "postalCode":"L6T"
+}'
+
+"=========================================="
+
+# Test 2: Duplicate username
+#  Expected: errorCode 1 
+
+curl -s -X POST "http://localhost:8081/signup" \
+-H "Content-Type: application/json" \
+-d '{
+  "username":"groot_test_a",
+  "password":"1234",
+  "email":"duplicate@test.com",
+  "firstName":"G",
+  "lastName":"Root",
+  "streetName":"Main",
+  "streetNumber":"1",
+  "city":"Brampton",
+  "country":"Canada",
+  "postalCode":"L6T"
+}'
+
+"=========================================="
+
+# Test 3: Missing required field
+#  Expected: server error or rejected request
+
+curl -s -X POST "curl -s -X POST "http://localhost:8081/signup" \
+-H "Content-Type: application/json" \
+-d '{
+  "username":"groot_test_a",
+  "password":"1234",
+  "email":"duplicate@test.com",
+  "firstName":"G",
+  "lastName":"Root",
+  "streetName":"Main",
+  "streetNumber":"1",
+  "city":"Brampton",
+  "country":"Canada",
+  "postalCode":"L6T"
+}'/signup" \
+-H "Content-Type: application/json" \
+-d '{
+  "username":"groot_missing",
+  "email":"missing@test.com"
+}'
+
+"=========================================="
+
+# Test 4: Valid login
+# Expected: errorCode 0 + sessionToken
+# Copy returned sessionToken for later tests.
+
+curl -s -X POST "http://localhost:8081/login" \
+-H "Content-Type: application/json" \
+-d '{
+  "accountUID":1,
+  "password":"1234"
+}'
+
+"=========================================="
+
+# Test 5: Wrong password
+#  Expected: errorCode 5
+
+curl -s -X POST "http://localhost:8081/login" \
+-H "Content-Type: application/json" \
+-d '{
+  "accountUID":1,
+  "password":"WRONG"
+}'
+
+"=========================================="
+
+# Test 6: Missing password in login
+#  Expected: bad request or failure
+
+curl -s -X POST "http://localhost:8081/login" \
+-H "Content-Type: application/json" \
+-d '{
+  "accountUID":1
+}'
+
+"=========================================="
+
+# Test 7: Valid authenticate
+#  Expected: errorCode 0 + authenticatedRequest
+# "Copy returned secret for later tests."
+
+curl -s -X POST "http://localhost:8081/authenticate" \
+-H "Content-Type: application/json" \
+-d '{
+  "sessionToken":"PUT_SESSION_TOKEN_HERE",
+  "request":{"accountUID":1}
+}'
+
+"=========================================="
+
+# Test 8: Fake session token
+# Expected: errorCode 4
+
+curl -s -X POST "http://localhost:8081/authenticate" \
+-H "Content-Type: application/json" \
+-d '{
+  "sessionToken":"fake",
+  "request":{"accountUID":1}
+}'
+
+"=========================================="
+
+# Test 9: Valid fetchaccount
+#  Expected: errorCode 0 + account info
+
+curl -s -X POST "http://localhost:8081/fetchaccount" \
+-H "Content-Type: application/json" \
+-d '{
+  "secret":"PUT_SECRET_HERE",
+  "request":{"accountUID":1}
+}'
+
+"=========================================="
+
+# Test 10: Malformed fetchaccount request
+#  Expected: rejection
+
+curl -s -X POST "http://localhost:8081/fetchaccount" \
+-H "Content-Type: application/json" \
+-d '{
+  "secret":"PUT_SECRET_HERE"
+}'
+
+"=========================================="
+
+# Test 11: Forgot password request
+#  Expected: errorCode 0 + rescueCode
+#  Copy returned rescueCode for later tests
+
+curl -s -X POST "http://localhost:8081/forgotpassword/request" \
+-H "Content-Type: application/json" \
+-d '{"accountUID":1}'
+
+"=========================================="
+
+# Test 12: Wrong rescue code
+  Expected: errorCode 3
+  
+curl -s -X POST "http://localhost:8081/forgotpassword" \
+-H "Content-Type: application/json" \
+-d '{
+  "accountUID":1,
+  "forgotPasswordRescueCode":"WRONGCODE",
+  "newPassword":"new123"
+}'
+
+"=========================================="
+
+# Test 13: Valid reset password
+  Expected: errorCode 0
+
+curl -s -X POST "http://localhost:8081/forgotpassword" \
+-H "Content-Type: application/json" \
+-d '{
+  "accountUID":1,
+  "forgotPasswordRescueCode":"PUT_RESCUE_CODE_HERE",
+  "newPassword":"new123"
+}'
+
+"=========================================="
+
+# Test 14: Login with new password
+  Expected: errorCode 0
+
+curl -s -X POST "http://localhost:8081/login" \
+-H "Content-Type: application/json" \
+-d '{
+  "accountUID":1,
+  "password":"new123"
+}'
+
+"=========================================="
