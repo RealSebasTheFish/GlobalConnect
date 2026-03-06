@@ -1,10 +1,9 @@
 package org.yorku.auctionmanager.service.impl;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.yorku.auctionmanager.service.ItemShipper;
 import org.yorku.auctionmanager.service.AuctionUpdatesPublisher;
-import org.yorku.auctionmanager.repository.AuctionDAO;
+import org.yorku.auctionmanager.repository.SqliteAuctionDAO;
 import org.yorku.auctionmanager.dto.*;
 import org.yorku.auctionmanager.model.*;
 import org.yorku.auctionmanager.client.PaymentVerifierClient; 
@@ -12,14 +11,15 @@ import org.yorku.auctionmanager.client.PaymentVerifierClient;
 @Service
 public class ItemShipperImpl implements ItemShipper {
 
-    @Autowired
-    private AuctionUpdatesPublisher publisher;
+    private final AuctionUpdatesPublisher publisher;
+    private final PaymentVerifierClient paymentVerifier; 
+    private final SqliteAuctionDAO auctionDAO; 
 
-    @Autowired
-    private PaymentVerifierClient paymentVerifier; 
-
-    @Autowired
-    private AuctionDAO auctionDAO; // Added to check DB state safely
+    public ItemShipperImpl(AuctionUpdatesPublisher publisher, PaymentVerifierClient paymentVerifier, SqliteAuctionDAO auctionDAO) {
+        this.publisher = publisher;
+        this.paymentVerifier = paymentVerifier;
+        this.auctionDAO = auctionDAO;
+    }
 
     @Override
     public ItemShipperResponse shipItem(AuthenticatedRequest request) {
@@ -29,12 +29,10 @@ public class ItemShipperImpl implements ItemShipper {
             String shippingAddress = shipPayload.getShippingAddress();
             int accountUID = request.getAccountUID();
 
-            // 1. Validate Address (Error 13)
             if (shippingAddress == null || shippingAddress.trim().isEmpty() || !isValidAddress(shippingAddress)) {
                 return new ItemShipperResponse(13, "Invalid Shipping Address");
             }
 
-            // 2. Verify Item Exists and Permissions (Errors 11 & 16)
             Item dbItem = auctionDAO.fetchItemById(targetItem.getId());
             if (dbItem == null) {
                 return new ItemShipperResponse(11, "Item not found in database");
@@ -43,17 +41,12 @@ public class ItemShipperImpl implements ItemShipper {
                 return new ItemShipperResponse(16, "Permission Denied: Only the owner can ship this item");
             }
 
-            // 3. Cross-Component Call: Verify Payment
+            // MOCK Cross-Component Call (We will fix this next!)
             int paymentStatus = paymentVerifier.verifyPayment(dbItem, accountUID);
             if (paymentStatus != 0) {
                 return new ItemShipperResponse(12, "Item Not Paid or Verification Failed");
             }
 
-            // 4. Update the DB state (Optional depending on your SDD, but recommended!)
-            // dbItem.setClosed(true); 
-            // auctionDAO.updateItem(dbItem);
-
-            // 5. Publish the shipping update
             publisher.receiveShipUpdate();
 
             return new ItemShipperResponse(0, "Item shipped successfully");
