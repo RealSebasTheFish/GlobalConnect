@@ -4,12 +4,12 @@ set -euo pipefail
 ###############################################################################
 # Usage:
 #   chmod +x paymenthandler_tests.sh
-#   ./paymenthandler_tests.sh                # http://localhost:8080
+#   ./paymenthandler_tests.sh                # http://localhost:8083
 #   ./paymenthandler_tests.sh localhost 8081 # domain + port
 ###############################################################################
 
 DOMAIN="${1:-http://localhost}"
-PORT="${2:-8080}"
+PORT="${2:-8083}"
 if [[ "$DOMAIN" != http://* && "$DOMAIN" != https://* ]]; then DOMAIN="http://$DOMAIN"; fi
 
 BASE="${DOMAIN%/}:$PORT/api/payment"

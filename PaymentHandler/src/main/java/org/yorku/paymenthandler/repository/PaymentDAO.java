@@ -9,6 +9,8 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.sql.DataSource;
+
 import org.springframework.stereotype.Repository;
 import org.yorku.paymenthandler.model.PendingPayment;
 import org.yorku.paymenthandler.model.Receipt;
@@ -16,33 +18,14 @@ import org.yorku.paymenthandler.model.UserPaymentMethod;
 
 @Repository
 public class PaymentDAO {
-	private final String dbUrl;
+	private final DataSource dataSource;
 
-	public PaymentDAO() {
-		this.dbUrl = "jdbc:sqlite:payment.db";
-		initSchema();
-	}
+	public PaymentDAO(DataSource dataSource) {
+        this.dataSource = dataSource;
+    }
 
 	private Connection conn() throws SQLException {
-		return DriverManager.getConnection(dbUrl);
-	}
-
-	private void initSchema() {
-		try (Connection c = conn(); Statement s = c.createStatement()) {
-
-			s.executeUpdate("CREATE TABLE IF NOT EXISTS receipts(" + " account_uid INTEGER NOT NULL,"
-					+ " item_id INTEGER NOT NULL," + " amount REAL NOT NULL," + " payment_method TEXT NOT NULL,"
-					+ " date TEXT NOT NULL," + " shipping_cost REAL NOT NULL," + " expedited_shipping INTEGER NOT NULL,"
-					+ " expedited_extra_cost REAL NOT NULL" + ");");
-
-			s.executeUpdate("CREATE TABLE IF NOT EXISTS pending_payments(" + " account_uid INTEGER NOT NULL,"
-					+ " item_id INTEGER NOT NULL," + " PRIMARY KEY(account_uid, item_id)" + ");");
-
-			s.executeUpdate("CREATE TABLE IF NOT EXISTS payment_methods(" + " account_uid INTEGER NOT NULL,"
-					+ " payment_method TEXT NOT NULL," + " cardholder_name TEXT," + " last4 TEXT," + " exp_date TEXT,"
-					+ " PRIMARY KEY(account_uid, payment_method)" + ");");
-		} catch (SQLException ignored) {
-		}
+		return dataSource.getConnection();
 	}
 
 	public List<Receipt> fetchReceipts(int accountUID) throws SQLException {
