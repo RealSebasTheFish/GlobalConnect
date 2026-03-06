@@ -20,6 +20,7 @@
     <module>AuctionManager</module>
     <module>AccountManager</module>
     <module>PaymentHandler</module>
+    <module>GatewayManager</module>
    </modules>
 
 </project>
