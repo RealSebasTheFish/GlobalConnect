@@ -3,16 +3,16 @@ package org.yorku.gatewaymanager.dto.call.resetpassword;
 import org.yorku.gatewaymanager.dto.common.Response;
 
 public class ResetPasswordStartCallResponse extends Response {
-    private String rescueCode;
+    private String forgotPasswordRescueCode;
 
     public ResetPasswordStartCallResponse() {
     }
 
-    public String getRescueCode() {
-        return rescueCode;
+    public String getForgotPasswordRescueCode() {
+        return forgotPasswordRescueCode;
     }
 
-    public void setRescueCode(String rescueCode) {
-        this.rescueCode = rescueCode;
+    public void setForgotPasswordRescueCode(String forgotPasswordRescueCode) {
+        this.forgotPasswordRescueCode = forgotPasswordRescueCode;
     }
 }

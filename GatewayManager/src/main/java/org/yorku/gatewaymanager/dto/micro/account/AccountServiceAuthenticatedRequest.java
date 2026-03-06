@@ -1,6 +1,6 @@
 package org.yorku.gatewaymanager.dto.micro.account;
 
-public class AccountServiceAuthenticatedRequest {
+public class AccountServiceAuthenticatedRequest extends AccountServiceRequest {
     private String secret;
     private AccountServiceRequest request;
 

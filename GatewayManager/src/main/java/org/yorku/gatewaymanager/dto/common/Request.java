@@ -3,6 +3,7 @@ package org.yorku.gatewaymanager.dto.common;
 public abstract class Request {
     private String auth;
     private String requestType;
+    private int accountUID;
 
     protected Request() {
     }
@@ -25,5 +26,13 @@ public abstract class Request {
 
     public void setRequestType(String requestType) {
         this.requestType = requestType;
+    }
+    
+    public int getAccountUID() { 
+    	return accountUID; 
+    }
+    
+    public void setAccountUID(int accountUID) { 
+    	this.accountUID = accountUID; 
     }
 }
