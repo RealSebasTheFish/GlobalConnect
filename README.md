@@ -185,6 +185,8 @@ The project includes comprehensive Postman test suites that demonstrate the main
 Import the following collections into Postman:
 
 ```text
+YorkU_E2E_Test_Suite_V3.json
+YorkU Gateway E2E Test Suite V3.postman_collection.json
 GlobalConnect_Gateway_8080_Postman_Collection_v4_spec_regression.json
 GlobalConnect_Gateway_8080_Postman_Collection_v5_strict.json
 ```
