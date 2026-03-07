@@ -8,14 +8,14 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import java.util.Map;
 import java.util.List;
+import org.yorku.auctionmanager.dto.*;
 
 @Component
 public class PaymentVerifierClient {
 
     private final RestTemplate restTemplate;
     
-    // In a real app, this would be in application.properties (e.g., http://localhost:8082)
-    private final String PAYMENT_SERVICE_URL = "http://localhost:8082/api/payment/fetchreceipts";
+    private final String PAYMENT_SERVICE_URL = "http://localhost:8081/api/payment/register-pending";
 
     public PaymentVerifierClient() {
         this.restTemplate = new RestTemplate();
@@ -65,4 +65,18 @@ public class PaymentVerifierClient {
             return false; // Fail secure: if we can't reach the payment service, assume not paid.
         }
     }
+    
+    public void registerPending(int accountUID, int itemId) {
+        // 1. Create the PayRequest (the inner data)
+        PayRequest payReq = new PayRequest(accountUID, itemId);
+        
+        // 2. Wrap it in AuthenticatedRequest (the outer envelope)
+        AuthenticatedRequest authReq = new AuthenticatedRequest();
+        authReq.setAccountUID(accountUID);
+        authReq.setRequest(payReq);
+        
+        // 3. Send to Payment Service
+        restTemplate.postForObject(PAYMENT_SERVICE_URL, authReq, String.class);
+    }
+    
 }

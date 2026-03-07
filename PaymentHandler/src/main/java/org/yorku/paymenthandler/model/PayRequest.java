@@ -1,6 +1,13 @@
 package org.yorku.paymenthandler.model;
 
 public class PayRequest extends Request {
+	
+
+    public PayRequest(int accountUID, int itemId) {
+        this.accountUID = accountUID;
+        this.itemId = itemId;
+        this.setRequestType("PayRequest");
+    }
 	private int accountUID;
 	private int itemId;
 

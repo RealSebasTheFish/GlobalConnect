@@ -11,6 +11,7 @@ import org.yorku.paymenthandler.model.FetchPendingPaymentsRequest;
 import org.yorku.paymenthandler.model.FetchReceiptsRequest;
 import org.yorku.paymenthandler.service.PaymentDatabaseManager;
 import org.yorku.paymenthandler.service.PaymentProcessor;
+import org.yorku.paymenthandler.model.*;
 
 @RestController
 @RequestMapping("/api/payment")
@@ -46,5 +47,30 @@ public class PaymentController {
 		}
 
 		return db.fetchPaymentData(request);
+	}
+	// Added endpoint that was missing to allow Auction microservice to register a pending payment once an auction closes
+	@PostMapping("/register-pending")
+	public PaymentResponse registerPending(@RequestBody AuthenticatedRequest authRequest) {
+	    // 1. Validation: Ensure it is a PayRequest
+	    if (authRequest == null || !(authRequest.getRequest() instanceof PayRequest)) {
+	        return new PaymentResponse(6, null); 
+	    }
+	    
+	    PayRequest pr = (PayRequest) authRequest.getRequest();
+	    
+	    try {
+	        // 2. Map PayRequest data to the Payment model the manager expects
+	        org.yorku.paymenthandler.model.Payment paymentModel = 
+	            new org.yorku.paymenthandler.model.Payment(pr.getAccountUID(), pr.getItemId());
+	        
+	        // 3. Call the correct manager method: addPendingPayment
+	        // Assuming 'db' is your PaymentDatabaseManager instance
+	        db.addPendingPayment(paymentModel);
+	        
+	        return new PaymentResponse(0, null);
+	    } catch (Exception e) {
+	        System.err.println("Error in register-pending: " + e.getMessage());
+	        return new PaymentResponse(2, null);
+	    }
 	}
 }

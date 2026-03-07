@@ -9,7 +9,8 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
     @JsonSubTypes.Type(value = BidRequest.class, name = "bid"),
     @JsonSubTypes.Type(value = ShipRequest.class, name = "ship"),
     @JsonSubTypes.Type(value = ItemRequest.class, name = "item"),
-    @JsonSubTypes.Type(value = ItemIdRequest.class, name = "itemId")
+    @JsonSubTypes.Type(value = ItemIdRequest.class, name = "itemId"),
+    @JsonSubTypes.Type(value = PayRequest.class, name = "pay") // Add this line!
 })
 public abstract class Request {
 }

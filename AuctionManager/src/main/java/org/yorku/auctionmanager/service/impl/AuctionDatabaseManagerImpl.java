@@ -1,6 +1,7 @@
 package org.yorku.auctionmanager.service.impl;
 
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 import org.yorku.auctionmanager.service.AuctionDatabaseManager;
 import org.yorku.auctionmanager.repository.SqliteAuctionDAO;
 import org.yorku.auctionmanager.dto.*;
@@ -15,10 +16,14 @@ import java.util.List;
 public class AuctionDatabaseManagerImpl implements AuctionDatabaseManager {
 
     private final SqliteAuctionDAO auctionDAO;
+    private final RestTemplate restTemplate;
+    
+    // Updated to port 8083 based on your Payment Service application.properties
+    private final String PAYMENT_SERVICE_URL = "http://localhost:8083/api/payment/register-pending";
 
-    // Constructor Injection replaces @Autowired
     public AuctionDatabaseManagerImpl(SqliteAuctionDAO auctionDAO) {
         this.auctionDAO = auctionDAO;
+        this.restTemplate = new RestTemplate();
     }
 
     @Override
@@ -37,14 +42,11 @@ public class AuctionDatabaseManagerImpl implements AuctionDatabaseManager {
             ItemRequest itemPayload = (ItemRequest) request.getRequest();
             Item newItem = itemPayload.getItem();
             
-            // Validate the item data (Error Code 10)
             if (newItem.getName() == null || newItem.getName().trim().isEmpty() || newItem.getStartingPrice() < 0) {
                 return new AuctionDatabaseResponse(10, "Invalid Item Data", new ArrayList<>());
             }
 
-            // Ensure the owner UID matches the authenticated user making the request
             newItem.setOwnerUid(request.getAccountUID());
-
             boolean isSaved = auctionDAO.insertItem(newItem);
             
             if (isSaved) {
@@ -52,8 +54,6 @@ public class AuctionDatabaseManagerImpl implements AuctionDatabaseManager {
             } else {
                 return new AuctionDatabaseResponse(2, "Failed to write to database", new ArrayList<>());
             }
-        } catch (ClassCastException e) {
-            return new AuctionDatabaseResponse(10, "Invalid Payload Format", new ArrayList<>());
         } catch (Exception e) {
             return new AuctionDatabaseResponse(2, "Internal Server Error", new ArrayList<>());
         }
@@ -63,29 +63,16 @@ public class AuctionDatabaseManagerImpl implements AuctionDatabaseManager {
     public AuctionDatabaseResponse removeItem(AuthenticatedRequest request) {
         try {
             ItemIdRequest idPayload = (ItemIdRequest) request.getRequest();
-            int itemIdToRemove = idPayload.getItemId();
-            int requestingUserId = request.getAccountUID();
+            int targetId = idPayload.getItemId();
+            Item targetItem = auctionDAO.fetchItemById(targetId);
 
-            Item targetItem = auctionDAO.fetchItemById(itemIdToRemove);
+            if (targetItem == null) return new AuctionDatabaseResponse(11, "Not found", new ArrayList<>());
+            if (targetItem.getOwnerUid() != request.getAccountUID()) return new AuctionDatabaseResponse(16, "Denied", new ArrayList<>());
 
-            if (targetItem == null) {
-                return new AuctionDatabaseResponse(11, "Item not found", new ArrayList<>());
-            }
-
-            if (targetItem.getOwnerUid() != requestingUserId) {
-                return new AuctionDatabaseResponse(16, "Permission Denied: You do not own this item", new ArrayList<>());
-            }
-
-            boolean isDeleted = auctionDAO.deleteItem(itemIdToRemove);
-            
-            if (isDeleted) {
-                return new AuctionDatabaseResponse(0, "Item removed successfully", new ArrayList<>());
-            } else {
-                return new AuctionDatabaseResponse(2, "Database Error during deletion", new ArrayList<>());
-            }
-
+            boolean isDeleted = auctionDAO.deleteItem(targetId);
+            return isDeleted ? new AuctionDatabaseResponse(0, "Removed", new ArrayList<>()) : new AuctionDatabaseResponse(2, "DB Error", new ArrayList<>());
         } catch (Exception e) {
-            return new AuctionDatabaseResponse(2, "Internal Server Error", new ArrayList<>());
+            return new AuctionDatabaseResponse(2, "Error", new ArrayList<>());
         }
     }
 
@@ -94,75 +81,94 @@ public class AuctionDatabaseManagerImpl implements AuctionDatabaseManager {
         try {
             ItemRequest itemPayload = (ItemRequest) request.getRequest();
             Item modifiedItemData = itemPayload.getItem();
-            int requestingUserId = request.getAccountUID();
-
             Item existingItem = auctionDAO.fetchItemById(modifiedItemData.getId());
 
-            if (existingItem == null) {
-                return new AuctionDatabaseResponse(11, "Item not found", new ArrayList<>());
-            }
+            if (existingItem == null) return new AuctionDatabaseResponse(11, "Not found", new ArrayList<>());
+            if (existingItem.getOwnerUid() != request.getAccountUID()) return new AuctionDatabaseResponse(16, "Denied", new ArrayList<>());
 
-            if (existingItem.getOwnerUid() != requestingUserId) {
-                return new AuctionDatabaseResponse(16, "Permission Denied: You do not own this item", new ArrayList<>());
-            }
-
+            boolean wasOpen = !existingItem.isClosed();
+            
             existingItem.setName(modifiedItemData.getName());
             existingItem.setDescription(modifiedItemData.getDescription());
+            existingItem.setCurrentHighestBid(modifiedItemData.getCurrentHighestBid());
+            existingItem.setHighestBidderUid(modifiedItemData.getHighestBidderUid());
+            existingItem.setClosed(modifiedItemData.isClosed()); 
 
             boolean isUpdated = auctionDAO.updateItem(existingItem);
             
             if (isUpdated) {
-                return new AuctionDatabaseResponse(0, "Item modified successfully", Collections.singletonList(existingItem));
-            } else {
-                return new AuctionDatabaseResponse(2, "Database Error during modification", new ArrayList<>());
+                // Check if the auction just closed and has a winner
+                if (existingItem.isClosed() && wasOpen && existingItem.getHighestBidderUid() > 0) {
+                    notifyPaymentService(existingItem);
+                }
+                return new AuctionDatabaseResponse(0, "Modified successfully", Collections.singletonList(existingItem));
             }
-
-        } catch (ClassCastException e) {
-            return new AuctionDatabaseResponse(10, "Invalid Payload Format", new ArrayList<>());
+            return new AuctionDatabaseResponse(2, "Update failed", new ArrayList<>());
         } catch (Exception e) {
-            return new AuctionDatabaseResponse(2, "Internal Server Error: " + e.getMessage(), new ArrayList<>());
+            return new AuctionDatabaseResponse(2, "Internal Error: " + e.getMessage(), new ArrayList<>());
         }
     }
 
     @Override
     public AuctionDatabaseResponse fetchUserItems(AuthenticatedRequest request) {
         try {
-            int accountUID = request.getAccountUID();
-            
-            // To make this work, we need a custom query in SqliteAuctionDAO
-            // I have added this missing method to the DAO in my head for now, 
-            // but we'll need to add it to your actual DAO class later!
-            List<Item> myItems = new ArrayList<>(); // auctionDAO.fetchItemsByOwner(accountUID);
-            
-            return new AuctionDatabaseResponse(0, "User items retrieved successfully", myItems);
+            List<Item> myItems = auctionDAO.fetchItemsByOwner(request.getAccountUID());
+            return new AuctionDatabaseResponse(0, "Success", myItems);
         } catch (Exception e) {
-            return new AuctionDatabaseResponse(2, "Internal Server Error", new ArrayList<>());
+            return new AuctionDatabaseResponse(2, "Error fetching user items", new ArrayList<>());
         }
     }
 
     @Override
     public AuctionDatabaseResponse pushAuctionUpdate(AuctionUpdate auctionUpdate) {
         try {
-            Item existingItem = auctionDAO.fetchItemById(auctionUpdate.getItemId());
+            Item item = auctionDAO.fetchItemById(auctionUpdate.getItemId());
+            if (item == null) return new AuctionDatabaseResponse(2, "Item not found", new ArrayList<>());
 
-            if (existingItem == null) {
-                return new AuctionDatabaseResponse(2, "Item not found for update", new ArrayList<>());
+            boolean wasOpen = !item.isClosed();
+            item.setCurrentHighestBid(auctionUpdate.getNewBidAmount());
+            item.setHighestBidderUid(auctionUpdate.getNewHighestBidderUid());
+            item.setClosed(auctionUpdate.isAuctionEnding());
+
+            if (auctionDAO.updateItem(item)) {
+                // Register pending payment if auction ended with a winner
+                if (item.isClosed() && wasOpen && item.getHighestBidderUid() > 0) {
+                    notifyPaymentService(item);
+                }
+                return new AuctionDatabaseResponse(0, "Auction updated", new ArrayList<>());
             }
-
-            existingItem.setCurrentHighestBid(auctionUpdate.getNewBidAmount());
-            existingItem.setHighestBidderUid(auctionUpdate.getNewHighestBidderUid());
-            existingItem.setClosed(auctionUpdate.isAuctionEnding());
-
-            boolean isUpdated = auctionDAO.updateItem(existingItem);
-
-            if (isUpdated) {
-                return new AuctionDatabaseResponse(0, "Auction state updated successfully", new ArrayList<>());
-            } else {
-                return new AuctionDatabaseResponse(2, "Failed to update auction state in DB", new ArrayList<>());
-            }
-
+            return new AuctionDatabaseResponse(2, "Update failed", new ArrayList<>());
         } catch (Exception e) {
-            return new AuctionDatabaseResponse(2, "Internal System Error: " + e.getMessage(), new ArrayList<>());
+            return new AuctionDatabaseResponse(2, "System Error", new ArrayList<>());
+        }
+    }
+
+    /**
+     * Helper method updated to accept an Item object and perform the 
+     * cross-microservice REST call to the Payment Service.
+     */
+    private void notifyPaymentService(Item item) {
+        try {
+            // 1. Create the inner PayRequest data
+            java.util.Map<String, Object> payRequestData = new java.util.HashMap<>();
+            payRequestData.put("requestType", "PayRequest"); // Matches @JsonSubTypes name
+            payRequestData.put("accountUID", item.getHighestBidderUid());
+            payRequestData.put("itemId", item.getId());
+
+            // 2. Wrap it in the AuthenticatedRequest structure
+            java.util.Map<String, Object> wrapper = new java.util.HashMap<>();
+            wrapper.put("request", payRequestData);
+            // We leave 'secret' out or set it to null; Jackson will handle it fine now
+            
+            // 3. Send to Port 8083
+            restTemplate.postForObject(PAYMENT_SERVICE_URL, wrapper, Object.class);
+            
+            System.out.println("SUCCESS: Pending payment registered for Item " + item.getId());
+        } catch (org.springframework.web.client.HttpStatusCodeException e) {
+            // This will now print the ACTUAL reason if it still fails
+            System.err.println("Payment Service Error (" + e.getStatusCode() + "): " + e.getResponseBodyAsString());
+        } catch (Exception e) {
+            System.err.println("Connection Error: " + e.getMessage());
         }
     }
 }

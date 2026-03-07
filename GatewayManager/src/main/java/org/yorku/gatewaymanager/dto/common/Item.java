@@ -1,4 +1,5 @@
 package org.yorku.gatewaymanager.dto.common;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Item {
     private int id;
@@ -8,6 +9,7 @@ public class Item {
     private double startingPrice;
     private double currentHighestBid;
     private int highestBidderUid;
+    @JsonProperty("closed")
     private boolean closed;
 
     public Item() {
@@ -69,10 +71,12 @@ public class Item {
         this.highestBidderUid = highestBidderUid;
     }
 
+    @JsonProperty("closed")
     public boolean isClosed() {
         return closed;
     }
 
+    @JsonProperty("closed")
     public void setClosed(boolean closed) {
         this.closed = closed;
     }
