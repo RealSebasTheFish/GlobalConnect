@@ -1,0 +1,1700 @@
+{
+	"id": "1d1a0e92-ce59-4b5b-83f0-ba12d5359528",
+	"name": "GlobalConnect Gateway 8080 Tests v4 - Spec and Regression Suite",
+	"timestamp": "2026-03-06T21:19:47.115Z",
+	"collection_id": "52307206-0f5752ab-7719-4427-8ad5-7a3e1809a0ce",
+	"folder_id": 0,
+	"environment_id": "0",
+	"totalPass": 63,
+	"delay": 0,
+	"persist": true,
+	"status": "finished",
+	"startedAt": "2026-03-06T21:19:41.087Z",
+	"totalFail": 0,
+	"results": [
+		{
+			"id": "0a82c15d-6d0f-49ec-b683-2c2862a08df9",
+			"name": "Initialize unique variables and sanity health",
+			"url": "http://localhost:8080/health",
+			"time": 4,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Health returns 200": true,
+				"Gateway healthy": true
+			},
+			"testPassFailCounts": {
+				"Health returns 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Gateway healthy": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				4
+			],
+			"allTests": [
+				{
+					"Health returns 200": true,
+					"Gateway healthy": true
+				}
+			]
+		},
+		{
+			"id": "3c5d6253-2733-43dc-bb2e-f968429c3cd9",
+			"name": "Signup seller",
+			"url": "http://localhost:8080/signup",
+			"time": 28,
+			"responseCode": {
+				"code": 201,
+				"name": "Created"
+			},
+			"tests": {
+				"Signup seller returns 201 or 409": true
+			},
+			"testPassFailCounts": {
+				"Signup seller returns 201 or 409": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				28
+			],
+			"allTests": [
+				{
+					"Signup seller returns 201 or 409": true
+				}
+			]
+		},
+		{
+			"id": "b37259cb-41f8-4501-841e-7346877ca2ef",
+			"name": "Login seller",
+			"url": "http://localhost:8080/login",
+			"time": 23,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Login seller returns 200": true,
+				"Login seller errorCode = 0": true
+			},
+			"testPassFailCounts": {
+				"Login seller returns 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Login seller errorCode = 0": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				23
+			],
+			"allTests": [
+				{
+					"Login seller returns 200": true,
+					"Login seller errorCode = 0": true
+				}
+			]
+		},
+		{
+			"id": "103fb600-d9b5-40d3-a4f8-bafc05d3f270",
+			"name": "Fetch seller account",
+			"url": "http://localhost:8080/fetchaccount",
+			"time": 38,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Fetch seller account returns 200": true,
+				"Fetch seller account errorCode = 0": true
+			},
+			"testPassFailCounts": {
+				"Fetch seller account returns 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Fetch seller account errorCode = 0": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				38
+			],
+			"allTests": [
+				{
+					"Fetch seller account returns 200": true,
+					"Fetch seller account errorCode = 0": true
+				}
+			]
+		},
+		{
+			"id": "b75f1d9c-0e24-4784-a904-5da19d1aba98",
+			"name": "Signup buyer",
+			"url": "http://localhost:8080/signup",
+			"time": 42,
+			"responseCode": {
+				"code": 201,
+				"name": "Created"
+			},
+			"tests": {
+				"Signup buyer returns 201 or 409": true
+			},
+			"testPassFailCounts": {
+				"Signup buyer returns 201 or 409": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				42
+			],
+			"allTests": [
+				{
+					"Signup buyer returns 201 or 409": true
+				}
+			]
+		},
+		{
+			"id": "1bbe2bd4-f450-4da4-b54f-1a072345abec",
+			"name": "Login buyer",
+			"url": "http://localhost:8080/login",
+			"time": 23,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Login buyer returns 200": true,
+				"Login buyer errorCode = 0": true
+			},
+			"testPassFailCounts": {
+				"Login buyer returns 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Login buyer errorCode = 0": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				23
+			],
+			"allTests": [
+				{
+					"Login buyer returns 200": true,
+					"Login buyer errorCode = 0": true
+				}
+			]
+		},
+		{
+			"id": "76085339-847a-4d17-9e2b-0bd36cfdc39e",
+			"name": "Fetch buyer account",
+			"url": "http://localhost:8080/fetchaccount",
+			"time": 37,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Fetch buyer account returns 200": true,
+				"Fetch buyer account errorCode = 0": true
+			},
+			"testPassFailCounts": {
+				"Fetch buyer account returns 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Fetch buyer account errorCode = 0": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				37
+			],
+			"allTests": [
+				{
+					"Fetch buyer account returns 200": true,
+					"Fetch buyer account errorCode = 0": true
+				}
+			]
+		},
+		{
+			"id": "311559b1-f20b-4f85-8e18-3fc75ec00f02",
+			"name": "Signup otherBuyer",
+			"url": "http://localhost:8080/signup",
+			"time": 156,
+			"responseCode": {
+				"code": 201,
+				"name": "Created"
+			},
+			"tests": {
+				"Signup otherBuyer returns 201 or 409": true
+			},
+			"testPassFailCounts": {
+				"Signup otherBuyer returns 201 or 409": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				156
+			],
+			"allTests": [
+				{
+					"Signup otherBuyer returns 201 or 409": true
+				}
+			]
+		},
+		{
+			"id": "c48bcb13-8845-47d2-b7e5-a72f616ca17a",
+			"name": "Login otherBuyer",
+			"url": "http://localhost:8080/login",
+			"time": 22,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Login otherBuyer returns 200": true,
+				"Login otherBuyer errorCode = 0": true
+			},
+			"testPassFailCounts": {
+				"Login otherBuyer returns 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Login otherBuyer errorCode = 0": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				22
+			],
+			"allTests": [
+				{
+					"Login otherBuyer returns 200": true,
+					"Login otherBuyer errorCode = 0": true
+				}
+			]
+		},
+		{
+			"id": "dbef4823-37ca-4850-9b2d-e5e8933c5837",
+			"name": "Fetch otherBuyer account",
+			"url": "http://localhost:8080/fetchaccount",
+			"time": 35,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Fetch otherBuyer account returns 200": true,
+				"Fetch otherBuyer account errorCode = 0": true
+			},
+			"testPassFailCounts": {
+				"Fetch otherBuyer account returns 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Fetch otherBuyer account errorCode = 0": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				35
+			],
+			"allTests": [
+				{
+					"Fetch otherBuyer account returns 200": true,
+					"Fetch otherBuyer account errorCode = 0": true
+				}
+			]
+		},
+		{
+			"id": "9339cf79-2f0f-4ae0-8ab6-dad94c75d86e",
+			"name": "Signup reset",
+			"url": "http://localhost:8080/signup",
+			"time": 53,
+			"responseCode": {
+				"code": 201,
+				"name": "Created"
+			},
+			"tests": {
+				"Signup reset returns 201 or 409": true
+			},
+			"testPassFailCounts": {
+				"Signup reset returns 201 or 409": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				53
+			],
+			"allTests": [
+				{
+					"Signup reset returns 201 or 409": true
+				}
+			]
+		},
+		{
+			"id": "71bb41ed-731f-4ce6-96b7-b6749c143207",
+			"name": "Login reset",
+			"url": "http://localhost:8080/login",
+			"time": 30,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Login reset returns 200": true,
+				"Login reset errorCode = 0": true
+			},
+			"testPassFailCounts": {
+				"Login reset returns 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Login reset errorCode = 0": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				30
+			],
+			"allTests": [
+				{
+					"Login reset returns 200": true,
+					"Login reset errorCode = 0": true
+				}
+			]
+		},
+		{
+			"id": "655a13e8-658a-47a2-a5fd-d0488baf3e1f",
+			"name": "Fetch reset account",
+			"url": "http://localhost:8080/fetchaccount",
+			"time": 36,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Fetch reset account returns 200": true,
+				"Fetch reset account errorCode = 0": true
+			},
+			"testPassFailCounts": {
+				"Fetch reset account returns 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Fetch reset account errorCode = 0": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				36
+			],
+			"allTests": [
+				{
+					"Fetch reset account returns 200": true,
+					"Fetch reset account errorCode = 0": true
+				}
+			]
+		},
+		{
+			"id": "9271b1b4-a12e-4c37-b66c-1fe979a57c25",
+			"name": "Authenticate seller session",
+			"url": "http://localhost:8080/authenticate",
+			"time": 19,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Authenticate valid returns 200": true,
+				"Authenticate valid errorCode = 0": true
+			},
+			"testPassFailCounts": {
+				"Authenticate valid returns 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Authenticate valid errorCode = 0": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				19
+			],
+			"allTests": [
+				{
+					"Authenticate valid returns 200": true,
+					"Authenticate valid errorCode = 0": true
+				}
+			]
+		},
+		{
+			"id": "ae571f20-86dc-4426-98d8-42b5bed023c0",
+			"name": "Authenticate invalid token",
+			"url": "http://localhost:8080/authenticate",
+			"time": 19,
+			"responseCode": {
+				"code": 401,
+				"name": "Unauthorized"
+			},
+			"tests": {
+				"Authenticate invalid token returns 400 or 401": true
+			},
+			"testPassFailCounts": {
+				"Authenticate invalid token returns 400 or 401": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				19
+			],
+			"allTests": [
+				{
+					"Authenticate invalid token returns 400 or 401": true
+				}
+			]
+		},
+		{
+			"id": "058d98a5-e830-42ec-bbc5-205969f7da1b",
+			"name": "Authenticate missing request.accountUID",
+			"url": "http://localhost:8080/authenticate",
+			"time": 2,
+			"responseCode": {
+				"code": 400,
+				"name": "Bad Request"
+			},
+			"tests": {
+				"Authenticate missing embedded accountUID returns 400": true
+			},
+			"testPassFailCounts": {
+				"Authenticate missing embedded accountUID returns 400": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				2
+			],
+			"allTests": [
+				{
+					"Authenticate missing embedded accountUID returns 400": true
+				}
+			]
+		},
+		{
+			"id": "98251e19-a959-4fb3-969a-4bc29f2bd522",
+			"name": "Login wrong password",
+			"url": "http://localhost:8080/login",
+			"time": 6,
+			"responseCode": {
+				"code": 401,
+				"name": "Unauthorized"
+			},
+			"tests": {
+				"Wrong password returns 401": true
+			},
+			"testPassFailCounts": {
+				"Wrong password returns 401": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				6
+			],
+			"allTests": [
+				{
+					"Wrong password returns 401": true
+				}
+			]
+		},
+		{
+			"id": "500428fc-e071-496d-abd9-7a284a568595",
+			"name": "Fetch account missing accountUID",
+			"url": "http://localhost:8080/fetchaccount",
+			"time": 2,
+			"responseCode": {
+				"code": 400,
+				"name": "Bad Request"
+			},
+			"tests": {
+				"Missing accountUID returns 400": true
+			},
+			"testPassFailCounts": {
+				"Missing accountUID returns 400": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				2
+			],
+			"allTests": [
+				{
+					"Missing accountUID returns 400": true
+				}
+			]
+		},
+		{
+			"id": "ad6be463-8de4-4771-9c41-37bf3705b781",
+			"name": "Add searchable item A as seller",
+			"url": "http://localhost:8080/additem",
+			"time": 28,
+			"responseCode": {
+				"code": 201,
+				"name": "Created"
+			},
+			"tests": {
+				"Search item A add returns 201": true
+			},
+			"testPassFailCounts": {
+				"Search item A add returns 201": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				28
+			],
+			"allTests": [
+				{
+					"Search item A add returns 201": true
+				}
+			]
+		},
+		{
+			"id": "4bfbb2c6-2ee9-4271-b746-fa232cbfe449",
+			"name": "Add searchable item B as seller",
+			"url": "http://localhost:8080/additem",
+			"time": 37,
+			"responseCode": {
+				"code": 201,
+				"name": "Created"
+			},
+			"tests": {
+				"Search item B add returns 201": true
+			},
+			"testPassFailCounts": {
+				"Search item B add returns 201": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				37
+			],
+			"allTests": [
+				{
+					"Search item B add returns 201": true
+				}
+			]
+		},
+		{
+			"id": "23941fe8-5aa2-4b4c-8d45-bd7fe6e04ace",
+			"name": "Fetch full catalogue",
+			"url": "http://localhost:8080/fetchcatalogue",
+			"time": 5,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Fetch full catalogue returns 200": true
+			},
+			"testPassFailCounts": {
+				"Fetch full catalogue returns 200": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				5
+			],
+			"allTests": [
+				{
+					"Fetch full catalogue returns 200": true
+				}
+			]
+		},
+		{
+			"id": "23cf1afb-dc3b-4b8d-83ed-39d45654a4f7",
+			"name": "Fetch catalogue keyword A",
+			"url": "http://localhost:8080/fetchcatalogue",
+			"time": 24,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Keyword fetch returns 200": true
+			},
+			"testPassFailCounts": {
+				"Keyword fetch returns 200": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				24
+			],
+			"allTests": [
+				{
+					"Keyword fetch returns 200": true
+				}
+			]
+		},
+		{
+			"id": "8fc2ad16-f560-4618-bafe-40095f4586c2",
+			"name": "Fetch catalogue keyword B",
+			"url": "http://localhost:8080/fetchcatalogue",
+			"time": 5,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Keyword fetch B returns 200": true
+			},
+			"testPassFailCounts": {
+				"Keyword fetch B returns 200": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				5
+			],
+			"allTests": [
+				{
+					"Keyword fetch B returns 200": true
+				}
+			]
+		},
+		{
+			"id": "cf5757e4-5e4f-4ebc-8e55-68929217dcf6",
+			"name": "Fetch seller items",
+			"url": "http://localhost:8080/fetchitems",
+			"time": 24,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Seller fetchitems returns 200": true,
+				"Seller fetchitems success": true
+			},
+			"testPassFailCounts": {
+				"Seller fetchitems returns 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Seller fetchitems success": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				24
+			],
+			"allTests": [
+				{
+					"Seller fetchitems returns 200": true,
+					"Seller fetchitems success": true
+				}
+			]
+		},
+		{
+			"id": "8f231b1a-ed9f-46fe-832b-deee18260445",
+			"name": "Fetch buyer items (should usually be empty)",
+			"url": "http://localhost:8080/fetchitems",
+			"time": 22,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Buyer fetchitems returns 200": true
+			},
+			"testPassFailCounts": {
+				"Buyer fetchitems returns 200": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				22
+			],
+			"allTests": [
+				{
+					"Buyer fetchitems returns 200": true
+				}
+			]
+		},
+		{
+			"id": "50ffdb91-1191-45c4-acdf-c7fa126b53a8",
+			"name": "Modify seller item as seller",
+			"url": "http://localhost:8080/modifyitem",
+			"time": 37,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Owner modify returns 200 or 409": true
+			},
+			"testPassFailCounts": {
+				"Owner modify returns 200 or 409": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				37
+			],
+			"allTests": [
+				{
+					"Owner modify returns 200 or 409": true
+				}
+			]
+		},
+		{
+			"id": "f505b26e-7177-4c23-b498-9f5125f7bd06",
+			"name": "Other buyer attempts to modify seller item",
+			"url": "http://localhost:8080/modifyitem",
+			"time": 31,
+			"responseCode": {
+				"code": 401,
+				"name": "Unauthorized"
+			},
+			"tests": {
+				"Unauthorized modify returns 401, 409, or 502": true
+			},
+			"testPassFailCounts": {
+				"Unauthorized modify returns 401, 409, or 502": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				31
+			],
+			"allTests": [
+				{
+					"Unauthorized modify returns 401, 409, or 502": true
+				}
+			]
+		},
+		{
+			"id": "a7a23c2c-0e58-45b7-b505-ada6d0cf0912",
+			"name": "Other buyer attempts to remove seller item",
+			"url": "http://localhost:8080/removeitem",
+			"time": 24,
+			"responseCode": {
+				"code": 401,
+				"name": "Unauthorized"
+			},
+			"tests": {
+				"Unauthorized remove returns 401, 409, or 502": true
+			},
+			"testPassFailCounts": {
+				"Unauthorized remove returns 401, 409, or 502": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				24
+			],
+			"allTests": [
+				{
+					"Unauthorized remove returns 401, 409, or 502": true
+				}
+			]
+		},
+		{
+			"id": "d99fb135-383c-4213-8fb7-965d14081d99",
+			"name": "Remove nonexistent item as seller",
+			"url": "http://localhost:8080/removeitem",
+			"time": 25,
+			"responseCode": {
+				"code": 409,
+				"name": "Conflict"
+			},
+			"tests": {
+				"Remove nonexistent returns 409 or 502": true
+			},
+			"testPassFailCounts": {
+				"Remove nonexistent returns 409 or 502": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				25
+			],
+			"allTests": [
+				{
+					"Remove nonexistent returns 409 or 502": true
+				}
+			]
+		},
+		{
+			"id": "a30d3089-5369-47ec-9f55-7d52d600edac",
+			"name": "Buyer places valid bid",
+			"url": "http://localhost:8080/bid",
+			"time": 36,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Valid bid returns 200 or 409": true
+			},
+			"testPassFailCounts": {
+				"Valid bid returns 200 or 409": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				36
+			],
+			"allTests": [
+				{
+					"Valid bid returns 200 or 409": true
+				}
+			]
+		},
+		{
+			"id": "03324588-9602-4fe7-a604-8191035398ab",
+			"name": "Other buyer outbids",
+			"url": "http://localhost:8080/bid",
+			"time": 40,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Second valid bid returns 200 or 409": true
+			},
+			"testPassFailCounts": {
+				"Second valid bid returns 200 or 409": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				40
+			],
+			"allTests": [
+				{
+					"Second valid bid returns 200 or 409": true
+				}
+			]
+		},
+		{
+			"id": "1f11cd4d-b8e0-45d5-8975-1310e3d69e84",
+			"name": "Low bid rejected",
+			"url": "http://localhost:8080/bid",
+			"time": 34,
+			"responseCode": {
+				"code": 409,
+				"name": "Conflict"
+			},
+			"tests": {
+				"Low bid returns 409 or 502": true
+			},
+			"testPassFailCounts": {
+				"Low bid returns 409 or 502": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				34
+			],
+			"allTests": [
+				{
+					"Low bid returns 409 or 502": true
+				}
+			]
+		},
+		{
+			"id": "c75d52d0-5152-475f-bbd6-8388f8aa73fa",
+			"name": "Bid invalid item",
+			"url": "http://localhost:8080/bid",
+			"time": 36,
+			"responseCode": {
+				"code": 409,
+				"name": "Conflict"
+			},
+			"tests": {
+				"Invalid item bid returns 409 or 502": true
+			},
+			"testPassFailCounts": {
+				"Invalid item bid returns 409 or 502": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				36
+			],
+			"allTests": [
+				{
+					"Invalid item bid returns 409 or 502": true
+				}
+			]
+		},
+		{
+			"id": "9230e3be-6e83-4600-bb90-0af7c5b0acc3",
+			"name": "Bid missing auth token",
+			"url": "http://localhost:8080/bid",
+			"time": 2,
+			"responseCode": {
+				"code": 401,
+				"name": "Unauthorized"
+			},
+			"tests": {
+				"Missing bid token returns 401": true
+			},
+			"testPassFailCounts": {
+				"Missing bid token returns 401": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				2
+			],
+			"allTests": [
+				{
+					"Missing bid token returns 401": true
+				}
+			]
+		},
+		{
+			"id": "7e56903e-ffa9-45bd-b72a-e278db037b5e",
+			"name": "Fetch pending payments before payment",
+			"url": "http://localhost:8080/fetchpendingpayments",
+			"time": 26,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Fetch pending payments returns 200 or 409": true
+			},
+			"testPassFailCounts": {
+				"Fetch pending payments returns 200 or 409": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				26
+			],
+			"allTests": [
+				{
+					"Fetch pending payments returns 200 or 409": true
+				}
+			]
+		},
+		{
+			"id": "09801deb-e31b-4410-93e0-f769c3334114",
+			"name": "Fetch receipts before payment",
+			"url": "http://localhost:8080/fetchreceipts",
+			"time": 33,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Fetch receipts before payment returns 200 or 409": true
+			},
+			"testPassFailCounts": {
+				"Fetch receipts before payment returns 200 or 409": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				33
+			],
+			"allTests": [
+				{
+					"Fetch receipts before payment returns 200 or 409": true
+				}
+			]
+		},
+		{
+			"id": "f72cb0c6-4343-46d6-8f4c-9e62b6712c17",
+			"name": "Pay missing fields",
+			"url": "http://localhost:8080/pay",
+			"time": 2,
+			"responseCode": {
+				"code": 400,
+				"name": "Bad Request"
+			},
+			"tests": {
+				"Missing payment fields returns 400": true
+			},
+			"testPassFailCounts": {
+				"Missing payment fields returns 400": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				2
+			],
+			"allTests": [
+				{
+					"Missing payment fields returns 400": true
+				}
+			]
+		},
+		{
+			"id": "fcd9a1b2-3be9-4751-a8f5-d20378eacfc2",
+			"name": "Pay invalid token",
+			"url": "http://localhost:8080/pay",
+			"time": 20,
+			"responseCode": {
+				"code": 401,
+				"name": "Unauthorized"
+			},
+			"tests": {
+				"Invalid payment token returns 401": true
+			},
+			"testPassFailCounts": {
+				"Invalid payment token returns 401": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				20
+			],
+			"allTests": [
+				{
+					"Invalid payment token returns 401": true
+				}
+			]
+		},
+		{
+			"id": "7e2b7e61-5fca-4636-9c08-3a9fa68c93cc",
+			"name": "Valid payment attempt",
+			"url": "http://localhost:8080/pay",
+			"time": 19,
+			"responseCode": {
+				"code": 409,
+				"name": "Conflict"
+			},
+			"tests": {
+				"Valid payment returns 200, 409, or 502": true
+			},
+			"testPassFailCounts": {
+				"Valid payment returns 200, 409, or 502": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				19
+			],
+			"allTests": [
+				{
+					"Valid payment returns 200, 409, or 502": true
+				}
+			]
+		},
+		{
+			"id": "1b2cb505-279f-45ec-95ff-3b6ba79edc85",
+			"name": "Fetch receipts after payment attempt",
+			"url": "http://localhost:8080/fetchreceipts",
+			"time": 34,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Fetch receipts returns 200 or 409": true
+			},
+			"testPassFailCounts": {
+				"Fetch receipts returns 200 or 409": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				34
+			],
+			"allTests": [
+				{
+					"Fetch receipts returns 200 or 409": true
+				}
+			]
+		},
+		{
+			"id": "8b49b2bd-3826-431a-bc25-d24f8a6db43b",
+			"name": "Ship with missing address",
+			"url": "http://localhost:8080/ship",
+			"time": 3,
+			"responseCode": {
+				"code": 400,
+				"name": "Bad Request"
+			},
+			"tests": {
+				"Missing shipping address returns 400": true
+			},
+			"testPassFailCounts": {
+				"Missing shipping address returns 400": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				3
+			],
+			"allTests": [
+				{
+					"Missing shipping address returns 400": true
+				}
+			]
+		},
+		{
+			"id": "54d211c0-3f89-4cd1-ba79-5fd50832af04",
+			"name": "Ship unpaid / post-payment item",
+			"url": "http://localhost:8080/ship",
+			"time": 40,
+			"responseCode": {
+				"code": 502,
+				"name": "Bad Gateway"
+			},
+			"tests": {
+				"Current shipping path returns 200, 409, or 502": true
+			},
+			"testPassFailCounts": {
+				"Current shipping path returns 200, 409, or 502": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				40
+			],
+			"allTests": [
+				{
+					"Current shipping path returns 200, 409, or 502": true
+				}
+			]
+		},
+		{
+			"id": "17ae681a-53c2-4a1c-8ffe-6c9e943259fc",
+			"name": "Request password reset",
+			"url": "http://localhost:8080/resetpassword/request",
+			"time": 26,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Reset request returns 200 or 409": true
+			},
+			"testPassFailCounts": {
+				"Reset request returns 200 or 409": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				26
+			],
+			"allTests": [
+				{
+					"Reset request returns 200 or 409": true
+				}
+			]
+		},
+		{
+			"id": "219b50d9-452e-46e1-ba33-5cd0ce7e95ae",
+			"name": "Reset password",
+			"url": "http://localhost:8080/resetpassword",
+			"time": 2,
+			"responseCode": {
+				"code": 400,
+				"name": "Bad Request"
+			},
+			"tests": {
+				"Reset password returns 200, 400, or 409": true
+			},
+			"testPassFailCounts": {
+				"Reset password returns 200, 400, or 409": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				2
+			],
+			"allTests": [
+				{
+					"Reset password returns 200, 400, or 409": true
+				}
+			]
+		},
+		{
+			"id": "4ced84cb-b0e1-4083-9baf-cffb9ec28db9",
+			"name": "Login with new password",
+			"url": "http://localhost:8080/login",
+			"time": 21,
+			"responseCode": {
+				"code": 401,
+				"name": "Unauthorized"
+			},
+			"tests": {
+				"New-password login returns 200 or 401": true
+			},
+			"testPassFailCounts": {
+				"New-password login returns 200 or 401": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				21
+			],
+			"allTests": [
+				{
+					"New-password login returns 200 or 401": true
+				}
+			]
+		},
+		{
+			"id": "a0aef76d-50f6-48c3-ade7-55917969744a",
+			"name": "Signup missing email",
+			"url": "http://localhost:8080/signup",
+			"time": 2,
+			"responseCode": {
+				"code": 400,
+				"name": "Bad Request"
+			},
+			"tests": {
+				"Signup missing email returns 400": true
+			},
+			"testPassFailCounts": {
+				"Signup missing email returns 400": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				2
+			],
+			"allTests": [
+				{
+					"Signup missing email returns 400": true
+				}
+			]
+		},
+		{
+			"id": "1182eb48-05f9-4d41-af93-eb6d7d27e3f7",
+			"name": "Login missing password",
+			"url": "http://localhost:8080/login",
+			"time": 3,
+			"responseCode": {
+				"code": 400,
+				"name": "Bad Request"
+			},
+			"tests": {
+				"Login missing password returns 400": true
+			},
+			"testPassFailCounts": {
+				"Login missing password returns 400": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				3
+			],
+			"allTests": [
+				{
+					"Login missing password returns 400": true
+				}
+			]
+		},
+		{
+			"id": "cceeaab9-c9b2-4efe-beab-b710e0ffef1c",
+			"name": "Add item negative starting price",
+			"url": "http://localhost:8080/additem",
+			"time": 3,
+			"responseCode": {
+				"code": 400,
+				"name": "Bad Request"
+			},
+			"tests": {
+				"Negative price additem returns 400": true
+			},
+			"testPassFailCounts": {
+				"Negative price additem returns 400": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				3
+			],
+			"allTests": [
+				{
+					"Negative price additem returns 400": true
+				}
+			]
+		},
+		{
+			"id": "c982a4d6-8606-4784-aaa3-c01a273d9236",
+			"name": "Modify item missing name",
+			"url": "http://localhost:8080/modifyitem",
+			"time": 3,
+			"responseCode": {
+				"code": 400,
+				"name": "Bad Request"
+			},
+			"tests": {
+				"Modify item missing name returns 400": true
+			},
+			"testPassFailCounts": {
+				"Modify item missing name returns 400": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				3
+			],
+			"allTests": [
+				{
+					"Modify item missing name returns 400": true
+				}
+			]
+		},
+		{
+			"id": "c37e142a-f751-4e03-b784-8e0c6174c7a8",
+			"name": "Pay with non-positive amount",
+			"url": "http://localhost:8080/pay",
+			"time": 3,
+			"responseCode": {
+				"code": 400,
+				"name": "Bad Request"
+			},
+			"tests": {
+				"Non-positive amount returns 400": true
+			},
+			"testPassFailCounts": {
+				"Non-positive amount returns 400": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				3
+			],
+			"allTests": [
+				{
+					"Non-positive amount returns 400": true
+				}
+			]
+		},
+		{
+			"id": "02491029-4814-4ff6-87b2-0cb69cea9318",
+			"name": "Remove second item as seller",
+			"url": "http://localhost:8080/removeitem",
+			"time": 17,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Cleanup remove returns 200, 409, or 502": true
+			},
+			"testPassFailCounts": {
+				"Cleanup remove returns 200, 409, or 502": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				17
+			],
+			"allTests": [
+				{
+					"Cleanup remove returns 200, 409, or 502": true
+				}
+			]
+		},
+		{
+			"id": "d4389f2b-72b6-4932-bc83-b4c1114683a0",
+			"name": "Fetch seller items after cleanup",
+			"url": "http://localhost:8080/fetchitems",
+			"time": 22,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Post-cleanup fetchitems returns 200": true
+			},
+			"testPassFailCounts": {
+				"Post-cleanup fetchitems returns 200": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				22
+			],
+			"allTests": [
+				{
+					"Post-cleanup fetchitems returns 200": true
+				}
+			]
+		}
+	],
+	"count": 1,
+	"totalTime": 1264,
+	"collection": {
+		"requests": [
+			{
+				"id": "0a82c15d-6d0f-49ec-b683-2c2862a08df9",
+				"method": "GET"
+			},
+			{
+				"id": "3c5d6253-2733-43dc-bb2e-f968429c3cd9",
+				"method": "POST"
+			},
+			{
+				"id": "b37259cb-41f8-4501-841e-7346877ca2ef",
+				"method": "POST"
+			},
+			{
+				"id": "103fb600-d9b5-40d3-a4f8-bafc05d3f270",
+				"method": "POST"
+			},
+			{
+				"id": "b75f1d9c-0e24-4784-a904-5da19d1aba98",
+				"method": "POST"
+			},
+			{
+				"id": "1bbe2bd4-f450-4da4-b54f-1a072345abec",
+				"method": "POST"
+			},
+			{
+				"id": "76085339-847a-4d17-9e2b-0bd36cfdc39e",
+				"method": "POST"
+			},
+			{
+				"id": "311559b1-f20b-4f85-8e18-3fc75ec00f02",
+				"method": "POST"
+			},
+			{
+				"id": "c48bcb13-8845-47d2-b7e5-a72f616ca17a",
+				"method": "POST"
+			},
+			{
+				"id": "dbef4823-37ca-4850-9b2d-e5e8933c5837",
+				"method": "POST"
+			},
+			{
+				"id": "9339cf79-2f0f-4ae0-8ab6-dad94c75d86e",
+				"method": "POST"
+			},
+			{
+				"id": "71bb41ed-731f-4ce6-96b7-b6749c143207",
+				"method": "POST"
+			},
+			{
+				"id": "655a13e8-658a-47a2-a5fd-d0488baf3e1f",
+				"method": "POST"
+			},
+			{
+				"id": "9271b1b4-a12e-4c37-b66c-1fe979a57c25",
+				"method": "POST"
+			},
+			{
+				"id": "ae571f20-86dc-4426-98d8-42b5bed023c0",
+				"method": "POST"
+			},
+			{
+				"id": "058d98a5-e830-42ec-bbc5-205969f7da1b",
+				"method": "POST"
+			},
+			{
+				"id": "98251e19-a959-4fb3-969a-4bc29f2bd522",
+				"method": "POST"
+			},
+			{
+				"id": "500428fc-e071-496d-abd9-7a284a568595",
+				"method": "POST"
+			},
+			{
+				"id": "ad6be463-8de4-4771-9c41-37bf3705b781",
+				"method": "POST"
+			},
+			{
+				"id": "4bfbb2c6-2ee9-4271-b746-fa232cbfe449",
+				"method": "POST"
+			},
+			{
+				"id": "23941fe8-5aa2-4b4c-8d45-bd7fe6e04ace",
+				"method": "POST"
+			},
+			{
+				"id": "23cf1afb-dc3b-4b8d-83ed-39d45654a4f7",
+				"method": "POST"
+			},
+			{
+				"id": "8fc2ad16-f560-4618-bafe-40095f4586c2",
+				"method": "POST"
+			},
+			{
+				"id": "cf5757e4-5e4f-4ebc-8e55-68929217dcf6",
+				"method": "POST"
+			},
+			{
+				"id": "8f231b1a-ed9f-46fe-832b-deee18260445",
+				"method": "POST"
+			},
+			{
+				"id": "50ffdb91-1191-45c4-acdf-c7fa126b53a8",
+				"method": "PUT"
+			},
+			{
+				"id": "f505b26e-7177-4c23-b498-9f5125f7bd06",
+				"method": "PUT"
+			},
+			{
+				"id": "a7a23c2c-0e58-45b7-b505-ada6d0cf0912",
+				"method": "DELETE"
+			},
+			{
+				"id": "d99fb135-383c-4213-8fb7-965d14081d99",
+				"method": "DELETE"
+			},
+			{
+				"id": "a30d3089-5369-47ec-9f55-7d52d600edac",
+				"method": "POST"
+			},
+			{
+				"id": "03324588-9602-4fe7-a604-8191035398ab",
+				"method": "POST"
+			},
+			{
+				"id": "1f11cd4d-b8e0-45d5-8975-1310e3d69e84",
+				"method": "POST"
+			},
+			{
+				"id": "c75d52d0-5152-475f-bbd6-8388f8aa73fa",
+				"method": "POST"
+			},
+			{
+				"id": "9230e3be-6e83-4600-bb90-0af7c5b0acc3",
+				"method": "POST"
+			},
+			{
+				"id": "7e56903e-ffa9-45bd-b72a-e278db037b5e",
+				"method": "POST"
+			},
+			{
+				"id": "09801deb-e31b-4410-93e0-f769c3334114",
+				"method": "POST"
+			},
+			{
+				"id": "f72cb0c6-4343-46d6-8f4c-9e62b6712c17",
+				"method": "POST"
+			},
+			{
+				"id": "fcd9a1b2-3be9-4751-a8f5-d20378eacfc2",
+				"method": "POST"
+			},
+			{
+				"id": "7e2b7e61-5fca-4636-9c08-3a9fa68c93cc",
+				"method": "POST"
+			},
+			{
+				"id": "1b2cb505-279f-45ec-95ff-3b6ba79edc85",
+				"method": "POST"
+			},
+			{
+				"id": "8b49b2bd-3826-431a-bc25-d24f8a6db43b",
+				"method": "POST"
+			},
+			{
+				"id": "54d211c0-3f89-4cd1-ba79-5fd50832af04",
+				"method": "POST"
+			},
+			{
+				"id": "17ae681a-53c2-4a1c-8ffe-6c9e943259fc",
+				"method": "POST"
+			},
+			{
+				"id": "219b50d9-452e-46e1-ba33-5cd0ce7e95ae",
+				"method": "POST"
+			},
+			{
+				"id": "4ced84cb-b0e1-4083-9baf-cffb9ec28db9",
+				"method": "POST"
+			},
+			{
+				"id": "a0aef76d-50f6-48c3-ade7-55917969744a",
+				"method": "POST"
+			},
+			{
+				"id": "1182eb48-05f9-4d41-af93-eb6d7d27e3f7",
+				"method": "POST"
+			},
+			{
+				"id": "cceeaab9-c9b2-4efe-beab-b710e0ffef1c",
+				"method": "POST"
+			},
+			{
+				"id": "c982a4d6-8606-4784-aaa3-c01a273d9236",
+				"method": "PUT"
+			},
+			{
+				"id": "c37e142a-f751-4e03-b784-8e0c6174c7a8",
+				"method": "POST"
+			},
+			{
+				"id": "02491029-4814-4ff6-87b2-0cb69cea9318",
+				"method": "DELETE"
+			},
+			{
+				"id": "d4389f2b-72b6-4932-bc83-b4c1114683a0",
+				"method": "POST"
+			}
+		]
+	}
+}

@@ -1,0 +1,280 @@
+{
+  "info": {
+    "_postman_id": "ab0b4f1f-fffb-41b0-9a99-8b6c7ecfcc95",
+    "name": "YorkU Gateway E2E Test Suite V3",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "52249500",
+    "_collection_link": "https://go.postman.co/collection/52249500-ab0b4f1f-fffb-41b0-9a99-8b6c7ecfcc95?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "1. Health Check",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/health",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "health"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "2. Seller Sign Up",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "var jsonData = pm.response.json();",
+              "if(jsonData.errorCode === 0) {",
+              "    pm.collectionVariables.set(\"seller_uid\", jsonData.account.accountUID);",
+              "    pm.collectionVariables.set(\"seller_token\", jsonData.sessionToken);",
+              "}"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"requestType\": \"SignUpCallRequest\",\n  \"username\": \"seller_{{$timestamp}}\",\n  \"password\": \"password123\",\n  \"email\": \"seller_{{$timestamp}}@yorku.ca\",\n  \"firstName\": \"John\",\n  \"lastName\": \"Doe\",\n  \"address\": {\n    \"streetName\": \"Keele St\",\n    \"streetNumber\": \"4700\",\n    \"city\": \"Toronto\",\n    \"country\": \"Canada\",\n    \"postalCode\": \"M3J 1P3\"\n  }\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/signup",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "signup"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "3. Buyer Sign Up",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "var jsonData = pm.response.json();",
+              "if(jsonData.errorCode === 0) {",
+              "    pm.collectionVariables.set(\"buyer_uid\", jsonData.account.accountUID);",
+              "    pm.collectionVariables.set(\"buyer_token\", jsonData.sessionToken);",
+              "}"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"requestType\": \"SignUpCallRequest\",\n  \"username\": \"buyer_{{$timestamp}}\",\n  \"password\": \"password123\",\n  \"email\": \"buyer_{{$timestamp}}@yorku.ca\",\n  \"firstName\": \"Jane\",\n  \"lastName\": \"Smith\",\n  \"address\": {\n    \"streetName\": \"Pond Rd\",\n    \"streetNumber\": \"99\",\n    \"city\": \"Toronto\",\n    \"country\": \"Canada\",\n    \"postalCode\": \"M3J 2S5\"\n  }\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/signup",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "signup"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "4. Add Item (Seller)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "var jsonData = pm.response.json();",
+              "if(jsonData.errorCode === 0 && jsonData.item) {",
+              "    pm.collectionVariables.set(\"item_id\", jsonData.item.id);",
+              "}"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"requestType\": \"AddItemCallRequest\",\n  \"accountUID\": {{seller_uid}},\n  \"sessionToken\": \"{{seller_token}}\",\n  \"item\": {\n    \"name\": \"Vintage Keyboard\",\n    \"description\": \"Mechanical searchable keyboard\",\n    \"startingPrice\": 50.00\n  }\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/additem",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "additem"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "5. Fetch Catalogue (Buyer)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"requestType\": \"FetchCatalogueCallRequest\",\n  \"keyword\": \"Keyboard\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/fetchcatalogue",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "fetchcatalogue"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "6. Bid on Item (Buyer)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"requestType\": \"BidCallRequest\",\n  \"accountUID\": {{buyer_uid}},\n  \"sessionToken\": \"{{buyer_token}}\",\n  \"targetItemId\": {{item_id}},\n  \"bidAmount\": 60.00\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/bid",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "bid"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "7. Close Auction (Seller)",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"requestType\": \"ModifyItemCallRequest\",\n  \"accountUID\": {{seller_uid}},\n  \"sessionToken\": \"{{seller_token}}\",\n  \"item\": {\n    \"id\": {{item_id}},\n    \"ownerUid\": {{seller_uid}},\n    \"name\": \"Vintage Keyboard\",\n    \"description\": \"Mechanical searchable keyboard\",\n    \"startingPrice\": 50.00,\n    \"currentHighestBid\": 60.00,\n    \"highestBidderUid\": {{buyer_uid}},\n    \"closed\": true\n  }\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/modifyitem",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "modifyitem"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "8. Pay for Item (Buyer)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"requestType\": \"PayCallRequest\",\n  \"accountUID\": {{buyer_uid}},\n  \"sessionToken\": \"{{buyer_token}}\",\n  \"itemId\": {{item_id}},\n  \"cardNumber\": \"1234567812345678\",\n  \"name\": \"Jane Smith\",\n  \"expDate\": \"12/28\",\n  \"securityCode\": \"123\",\n  \"paymentMethod\": \"CREDIT\",\n  \"amount\": 60.00,\n  \"shippingCost\": 15.00,\n  \"expeditedShipping\": false,\n  \"expeditedExtraCost\": 0.00\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/pay",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "pay"
+          ]
+        }
+      },
+      "response": []
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080"
+    },
+    {
+      "key": "seller_uid",
+      "value": "0"
+    },
+    {
+      "key": "seller_token",
+      "value": ""
+    },
+    {
+      "key": "buyer_uid",
+      "value": "0"
+    },
+    {
+      "key": "buyer_token",
+      "value": ""
+    },
+    {
+      "key": "item_id",
+      "value": "0"
+    }
+  ]
+}
