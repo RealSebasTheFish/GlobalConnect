@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="GlobalConnectGatewayManager" />
+        <module name="AccountManager" />
+        <module name="PaymentHandler" />
+        <module name="AuctionManager" />
+      </profile>
+    </annotationProcessing>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="AccountManager" options="-parameters" />
+      <module name="AuctionManager" options="-parameters" />
+      <module name="GlobalConnectGatewayManager" options="-parameters" />
+      <module name="PaymentHandler" options="-parameters" />
+    </option>
+  </component>
+</project>
