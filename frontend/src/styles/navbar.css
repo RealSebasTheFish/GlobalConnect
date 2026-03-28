@@ -1,0 +1,77 @@
+.top-navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 18px 32px;
+    background: white;
+    border-bottom: 1px solid var(--border);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+}
+
+.nav-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.brand-logo {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: grid;
+    place-items: center;
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    color: white;
+    font-weight: 800;
+}
+
+.brand-text {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--text);
+}
+
+.menu-wrapper {
+    position: relative;
+}
+
+.menu-button {
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 12px 18px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.dropdown-menu {
+    position: absolute;
+    top: 52px;
+    right: 0;
+    min-width: 180px;
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    z-index: 100;
+}
+
+.dropdown-menu a,
+.dropdown-menu button {
+    width: 100%;
+    display: block;
+    padding: 14px 16px;
+    background: white;
+    border: none;
+    text-align: left;
+    color: var(--text);
+    cursor: pointer;
+    font: inherit;
+}
+
+.dropdown-menu a:hover,
+.dropdown-menu button:hover {
+    background: #f3faf7;
+}

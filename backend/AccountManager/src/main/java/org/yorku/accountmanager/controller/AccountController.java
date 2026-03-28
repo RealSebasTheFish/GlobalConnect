@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.*;
 
 import org.yorku.accountmanager.dto.*;
 import org.yorku.accountmanager.service.AccountService;
-
+@CrossOrigin(origins = "http://localhost:5173")
 @RestController
 @RequestMapping("/")
 public class AccountController {
