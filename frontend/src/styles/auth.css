@@ -1,0 +1,121 @@
+.auth-page {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 42% 58%;
+}
+
+.auth-left {
+    background:
+            linear-gradient(135deg, rgba(31, 111, 95, 0.95), rgba(42, 157, 143, 0.92)),
+            linear-gradient(45deg, #1c6d5d, #2b8f84);
+    color: white;
+    padding: 64px 48px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.auth-left h1 {
+    font-size: 3rem;
+    margin-bottom: 12px;
+}
+
+.auth-left p {
+    max-width: 380px;
+    line-height: 1.8;
+    font-size: 1.1rem;
+}
+
+.auth-brand-badge {
+    width: 64px;
+    height: 64px;
+    border-radius: 16px;
+    display: grid;
+    place-items: center;
+    background: rgba(255, 255, 255, 0.18);
+    font-weight: 800;
+    margin-bottom: 24px;
+}
+
+.auth-right {
+    display: grid;
+    place-items: center;
+    padding: 32px;
+    background: #f8fcfa;
+}
+
+.auth-card {
+    width: 100%;
+    max-width: 620px;
+    background: white;
+    border-radius: 24px;
+    box-shadow: var(--shadow);
+    padding: 36px;
+    border: 1px solid var(--border);
+}
+
+.auth-card h2 {
+    margin: 0 0 10px;
+    font-size: 2.4rem;
+}
+
+.auth-subtitle {
+    color: var(--muted);
+    margin-bottom: 22px;
+}
+
+.auth-form {
+    display: grid;
+    gap: 14px;
+}
+
+.signup-grid {
+    grid-template-columns: 1fr 1fr;
+}
+
+.auth-form input {
+    width: 100%;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 16px;
+    background: #fbfefd;
+}
+
+.auth-form input:focus {
+    outline: 2px solid #cceee5;
+    border-color: var(--accent);
+}
+
+.auth-links {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 6px;
+}
+
+.auth-links a {
+    color: var(--primary);
+    font-weight: 700;
+}
+
+@media (max-width: 900px) {
+    .auth-page {
+        grid-template-columns: 1fr;
+    }
+
+    .auth-left {
+        display: none;
+    }
+
+    .auth-right {
+        padding: 20px;
+    }
+
+    .auth-card {
+        padding: 24px;
+    }
+
+    .signup-grid {
+        grid-template-columns: 1fr;
+    }
+}
