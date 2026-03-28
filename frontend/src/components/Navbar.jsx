@@ -35,6 +35,12 @@ export default function Navbar() {
                             <Link to="/account" onClick={() => setOpen(false)}>
                                 Account Info
                             </Link>
+                            <Link to="/pending-payments" onClick={() => setOpen(false)}>
+                                Pending Payments
+                            </Link>
+                            <Link to="/receipts" onClick={() => setOpen(false)}>
+                                Receipts
+                            </Link>
                             <button onClick={handleLogout}>Logout</button>
                         </div>
                     )}

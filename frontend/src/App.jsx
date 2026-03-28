@@ -6,6 +6,9 @@ import ForgotPasswordPage from "./pages/ForgotPasswordPage";
 import ResetPasswordPage from "./pages/ResetPasswordPage";
 import AccountPage from "./pages/AccountPage";
 import Dashboard from "./pages/Dashboard";
+import ReceiptsPage from "./pages/ReceiptsPage";
+import PendingPaymentsPage from "./pages/PendingPaymentsPage";
+import PaymentPage from "./pages/PaymentPage";
 
 export default function App() {
     return (
@@ -16,6 +19,9 @@ export default function App() {
             <Route path="/forgot-password" element={<ForgotPasswordPage />} />
             <Route path="/reset-password" element={<ResetPasswordPage />} />
             <Route path="/account" element={<AccountPage />} />
+            <Route path="/pending-payments" element={<PendingPaymentsPage />} />
+            <Route path="/payment" element={<PaymentPage />} />
+            <Route path="/receipts" element={<ReceiptsPage />} />
             <Route path="/dashboard" element={<Dashboard />} />
         </Routes>
     );
