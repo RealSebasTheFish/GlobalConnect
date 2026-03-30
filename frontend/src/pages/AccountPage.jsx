@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
-import { authenticate, fetchAccount, startForgotPassword } from "../services/accountApi";
+import { fetchAccount, startForgotPassword } from "../services/accountApi";
 import { getAccountUID, getSessionToken } from "../utils/storage";
 import "../styles/account.css";
 
@@ -17,29 +17,29 @@ export default function AccountPage() {
     const [rescueLoading, setRescueLoading] = useState(false);
 
     useEffect(() => {
-        async function loadAccount() {
+        const checkAuth = async () => {
+            const token = getSessionToken();
+            const accountUID = getAccountUID();
+            if (!token || !accountUID) {
+                navigate("/login");
+                return;
+            }
+
             try {
-                const sessionToken = getSessionToken();
-                const accountUID = getAccountUID();
-
-                if (!sessionToken || !accountUID) {
-                    navigate("/login");
-                    return;
+                const acct = await fetchAccount(token, accountUID);
+                if (acct && acct.accounts && acct.accounts.length > 0) {
+                    setAccount(acct.accounts[0]);
+                } else {
+                    setError("Account details not found.");
                 }
-
-                const authResponse = await authenticate(sessionToken, accountUID);
-                const accountResponse = await fetchAccount(authResponse.authenticatedRequest);
-
-                const fetchedAccount = accountResponse?.accounts?.[0];
-                setAccount(fetchedAccount || null);
             } catch (err) {
                 setError("Session invalid or account could not be loaded.");
             } finally {
                 setLoading(false);
             }
-        }
+        };
 
-        loadAccount();
+        checkAuth();
     }, [navigate]);
 
     async function handleGenerateRescueCode() {

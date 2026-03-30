@@ -9,6 +9,9 @@ import Dashboard from "./pages/Dashboard";
 import ReceiptsPage from "./pages/ReceiptsPage";
 import PendingPaymentsPage from "./pages/PendingPaymentsPage";
 import PaymentPage from "./pages/PaymentPage";
+import ItemManager from "./pages/ItemManager";
+import BidPage from "./pages/BidPage";
+import BidHistory from "./pages/BidHistory";
 
 export default function App() {
     return (
@@ -22,6 +25,9 @@ export default function App() {
             <Route path="/pending-payments" element={<PendingPaymentsPage />} />
             <Route path="/payment" element={<PaymentPage />} />
             <Route path="/receipts" element={<ReceiptsPage />} />
+            <Route path="/item-manager" element={<ItemManager />} />
+            <Route path="/history" element={<BidHistory />} />
+            <Route path="/bid/:itemId" element={<BidPage />} />
             <Route path="/dashboard" element={<Dashboard />} />
         </Routes>
     );

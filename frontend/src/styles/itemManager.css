@@ -1,0 +1,217 @@
+.item-manager-container {
+    max-width: 1000px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    font-family: Arial, sans-serif;
+}
+
+.item-manager-container h1, 
+.item-manager-container h2 {
+    color: #333;
+    margin-bottom: 1rem;
+}
+
+.error-message {
+    background-color: #ffe6e6;
+    color: #cc0000;
+    padding: 1rem;
+    border: 1px solid #cc0000;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+}
+
+.form-container {
+    background-color: #fff;
+    padding: 1.5rem;
+    border-radius: 6px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    margin-bottom: 2rem;
+}
+
+.form-group {
+    margin-bottom: 1.2rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group label {
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+    color: #555;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+    padding: 0.8rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1rem;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+    border-color: #0066cc;
+    outline: none;
+}
+
+.checkbox-group {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+}
+
+.checkbox-group label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: normal;
+    cursor: pointer;
+    font-size: 1.1rem;
+    color: #333;
+    margin-bottom: 0.2rem;
+}
+
+.checkbox-group input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+
+.help-text {
+    color: #666;
+    font-size: 0.85rem;
+    margin-top: 0.2rem;
+}
+
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.submit-btn,
+.cancel-btn,
+.edit-btn,
+.delete-btn,
+.activate-btn {
+    padding: 0.8rem 1.5rem;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
+.submit-btn {
+    background-color: #28a745;
+    color: white;
+}
+
+.submit-btn:hover {
+    background-color: #218838;
+}
+
+.cancel-btn {
+    background-color: #6c757d;
+    color: white;
+}
+
+.cancel-btn:hover {
+    background-color: #5a6268;
+}
+
+.edit-btn {
+    background-color: #ffc107;
+    color: #333;
+    padding: 0.5rem 1rem;
+    margin-right: 0.5rem;
+}
+
+.edit-btn:hover {
+    background-color: #e0a800;
+}
+
+.delete-btn {
+    background-color: #dc3545;
+    color: white;
+    padding: 0.5rem 1rem;
+}
+
+.delete-btn:hover {
+    background-color: #c82333;
+}
+
+.activate-btn {
+    background-color: #007bff;
+    color: white;
+    padding: 0.5rem 1rem;
+    margin-right: 0.5rem;
+}
+
+.activate-btn:hover {
+    background-color: #0069d9;
+}
+
+.items-list {
+    background-color: #fff;
+    padding: 1.5rem;
+    border-radius: 6px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.items-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+}
+
+.items-table th,
+.items-table td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+.items-table th {
+    background-color: #f1f1f1;
+    color: #333;
+    font-weight: bold;
+}
+
+.items-table tr:hover {
+    background-color: #f9f9f9;
+}
+
+.items-table .actions-cell {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.status-badge {
+    padding: 0.4rem 0.8rem;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.status-active {
+    background-color: #c3e6cb;
+    color: #155724;
+}
+
+.status-inactive {
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+.status-closed {
+    background-color: #f8d7da;
+    color: #721c24;
+}

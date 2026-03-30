@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestClientException;
@@ -84,6 +85,7 @@ import org.yorku.gatewaymanager.dto.micro.payment.fetchreceipts.PaymentServiceFe
 import org.yorku.gatewaymanager.dto.micro.payment.pay.PaymentServicePayRequest;
 
 @RestController
+@CrossOrigin(origins = "*") // Allow requests from any origin, making it deployable anywhere
 @RequestMapping("/")
 public class GatewayController {
 
@@ -742,30 +744,23 @@ public class GatewayController {
         }
 
         try {
-            ResponseEntity<AuctionServiceAuctionDatabaseResponse> entity = restTemplate.exchange(
-                auctionBaseUrl + "/api/auction/catalogue",
-                HttpMethod.GET,
-                HttpEntity.EMPTY,
+            AuctionServiceAuthenticatedRequest forward = new AuctionServiceAuthenticatedRequest();
+            forward.setSecret(authResp.getAuthenticatedRequest().getSecret());
+            forward.setAccountUID(accountUID);
+
+            AuctionServiceAuctionDatabaseResponse resp = restTemplate.postForObject(
+                auctionBaseUrl + "/api/auction/useritems",
+                forward,
                 AuctionServiceAuctionDatabaseResponse.class
             );
 
-            AuctionServiceAuctionDatabaseResponse resp = entity.getBody();
             if (resp == null) {
                 return downstreamError(error(out, 2, "Auction service unavailable."));
             }
 
-            List<Item> ownedItems = new ArrayList<>();
-            if (resp.getItems() != null) {
-                for (Item item : resp.getItems()) {
-                    if (item != null && item.getOwnerUid() == accountUID) {
-                        ownedItems.add(item);
-                    }
-                }
-            }
-
             out.setErrorCode(resp.getErrorCode());
             out.setMessage(defaultMessage(resp.getErrorCode(), "Fetch items failed."));
-            out.setItems(ownedItems);
+            out.setItems(resp.getItems());
 
             return resp.getErrorCode() == 0 ? ok(out) : conflict(out);
         } catch (HttpStatusCodeException ex) {

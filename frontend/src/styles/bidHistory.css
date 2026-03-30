@@ -1,0 +1,109 @@
+.history-page {
+    min-height: 100vh;
+    background-color: #f8f9fa;
+    font-family: Arial, sans-serif;
+}
+
+.history-container {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 0 2rem;
+}
+
+.history-container h1 {
+    color: #333;
+    margin-bottom: 2rem;
+    font-size: 2.2rem;
+    border-bottom: 2px solid #ddd;
+    padding-bottom: 0.5rem;
+}
+
+.history-sections {
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
+}
+
+.history-section h2 {
+    font-size: 1.5rem;
+    color: #444;
+    margin-bottom: 1.5rem;
+}
+
+.empty-state {
+    color: #777;
+    font-style: italic;
+    background-color: white;
+    padding: 2rem;
+    border-radius: 8px;
+    text-align: center;
+    border: 1px dashed #ccc;
+}
+
+.history-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1.5rem;
+}
+
+.history-card {
+    background-color: white;
+    padding: 1.5rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    border-left: 5px solid #0056b3;
+}
+
+.history-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+    gap: 1rem;
+}
+
+.history-card-header h4 {
+    margin: 0;
+    font-size: 1.2rem;
+    color: #333;
+}
+
+.hist-badge {
+    padding: 0.3rem 0.6rem;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+/* Bid Statuses */
+.status-won { background-color: #d4edda; color: #155724; }
+.status-lost { background-color: #f8d7da; color: #721c24; }
+.status-winning { background-color: #cce5ff; color: #004085; }
+.status-outbid { background-color: #fff3cd; color: #856404; }
+.status-unknown { background-color: #e2e3e5; color: #383d41; }
+
+/* Item Statuses */
+.status-sold { background-color: #d4edda; color: #155724; }
+.status-active-bidding { background-color: #cce5ff; color: #004085; }
+
+.history-card p {
+    margin: 0.5rem 0;
+    color: #555;
+    font-size: 0.95rem;
+}
+
+.history-date {
+    font-size: 0.8rem !important;
+    color: #888 !important;
+    margin-top: 1rem !important;
+}
+
+.history-error {
+    background-color: #f8d7da;
+    color: #721c24;
+    padding: 1rem;
+    border-radius: 6px;
+    border-left: 4px solid #dc3545;
+}

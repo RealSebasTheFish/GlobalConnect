@@ -9,6 +9,7 @@ public class Item {
     private double startingPrice;
     private double currentHighestBid;
     private int highestBidderUid;
+    private long auctionEndTime;
     @JsonProperty("closed")
     private boolean closed;
 
@@ -69,6 +70,14 @@ public class Item {
 
     public void setHighestBidderUid(int highestBidderUid) {
         this.highestBidderUid = highestBidderUid;
+    }
+
+    public long getAuctionEndTime() {
+        return auctionEndTime;
+    }
+
+    public void setAuctionEndTime(long auctionEndTime) {
+        this.auctionEndTime = auctionEndTime;
     }
 
     @JsonProperty("closed")

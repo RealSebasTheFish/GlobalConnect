@@ -1,4 +1,4 @@
-const API_BASE = "http://localhost:8083/api/payment";
+const API_BASE = "http://localhost:8080"; // Call the GatewayManager instead
 
 const PAYMENT_ERROR_MESSAGES = {
     1: "Some required payment information is missing.",
@@ -53,18 +53,11 @@ async function post(path, body) {
     return handleResponse(response);
 }
 
-function buildAuthenticatedRequest(secret, request) {
-    return {
-        secret,
-        request,
-    };
-}
-
 export async function pay(secret, payload) {
     return post(
         "/pay",
-        buildAuthenticatedRequest(secret, {
-            requestType: "PayRequest",
+        {
+            sessionToken: secret,
             accountUID: Number(payload.accountUID),
             itemId: Number(payload.itemId),
             cardNumber: payload.cardNumber,
@@ -76,37 +69,48 @@ export async function pay(secret, payload) {
             shippingCost: Number(payload.shippingCost),
             expeditedShipping: Boolean(payload.expeditedShipping),
             expeditedExtraCost: Number(payload.expeditedExtraCost),
-        })
+        }
     );
 }
 
 export async function fetchReceipts(secret, accountUID) {
     return post(
         "/fetchreceipts",
-        buildAuthenticatedRequest(secret, {
-            requestType: "FetchReceiptsRequest",
+        {
+            sessionToken: secret,
             accountUID: Number(accountUID),
-        })
+        }
     );
 }
 
 export async function fetchPendingPayments(secret, accountUID) {
     return post(
         "/fetchpendingpayments",
-        buildAuthenticatedRequest(secret, {
-            requestType: "FetchPendingPaymentsRequest",
+        {
+            sessionToken: secret,
             accountUID: Number(accountUID),
-        })
+        }
     );
 }
 
+// Ensure you don't call microservices directly from frontend if you mean to use Gateway
+// Note: Register pending is typically a backend-to-backend call. There's no gateway route for it.
 export async function registerPending(secret, accountUID, itemId) {
-    return post(
-        "/register-pending",
-        buildAuthenticatedRequest(secret, {
-            requestType: "PayRequest",
-            accountUID: Number(accountUID),
-            itemId: Number(itemId),
-        })
-    );
+    console.warn("registerPending should typically be called by AuctionManager directly, not frontend.");
+    const DIRECT_MICROSERVICE_URL = "http://localhost:8083/api/payment";
+    const response = await fetch(`${DIRECT_MICROSERVICE_URL}/register-pending`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            secret,
+            request: {
+                requestType: "PayRequest",
+                accountUID: Number(accountUID),
+                itemId: Number(itemId),
+            }
+        }),
+    });
+    return handleResponse(response);
 }

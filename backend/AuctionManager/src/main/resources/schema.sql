@@ -6,5 +6,6 @@ CREATE TABLE IF NOT EXISTS items (
     starting_price REAL NOT NULL,
     current_highest_bid REAL NOT NULL,
     highest_bidder_uid INTEGER,
+    auction_end_time INTEGER DEFAULT 0,
     is_closed INTEGER DEFAULT 0
 );

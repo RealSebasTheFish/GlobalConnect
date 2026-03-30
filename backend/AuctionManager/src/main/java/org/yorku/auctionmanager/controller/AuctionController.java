@@ -8,6 +8,7 @@ import org.yorku.auctionmanager.service.AuctionDatabaseManager;
 import org.yorku.auctionmanager.service.AuctionResolver;
 import org.yorku.auctionmanager.service.ItemShipper;
 
+@CrossOrigin(origins = "http://localhost:5173")
 @RestController
 @RequestMapping("/api/auction")
 public class AuctionController {
@@ -26,6 +27,14 @@ public class AuctionController {
     @GetMapping("/catalogue")
     public ResponseEntity<AuctionDatabaseResponse> getCatalogue() {
         AuctionDatabaseResponse resp = dbManager.fetchCatalogue();
+        
+        HttpStatus status = (resp.getErrorCode() == 0) ? HttpStatus.OK : HttpStatus.INTERNAL_SERVER_ERROR;
+        return new ResponseEntity<>(resp, status);
+    }
+
+    @PostMapping("/useritems")
+    public ResponseEntity<AuctionDatabaseResponse> getUserItems(@RequestBody AuthenticatedRequest request) {
+        AuctionDatabaseResponse resp = dbManager.fetchUserItems(request);
         
         HttpStatus status = (resp.getErrorCode() == 0) ? HttpStatus.OK : HttpStatus.INTERNAL_SERVER_ERROR;
         return new ResponseEntity<>(resp, status);

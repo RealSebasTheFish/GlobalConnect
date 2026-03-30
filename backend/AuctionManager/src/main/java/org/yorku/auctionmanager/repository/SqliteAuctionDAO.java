@@ -24,9 +24,17 @@ public class SqliteAuctionDAO {
         try {
             KeyHolder kh = new GeneratedKeyHolder();
             
+            // If end time is not set, default to 5 minutes from now
+            long endTime = item.getAuctionEndTime();
+            if (endTime <= 0) {
+                endTime = System.currentTimeMillis() + (5 * 60 * 1000);
+                item.setAuctionEndTime(endTime);
+            }
+            final long finalEndTime = endTime;
+
             int rowsAffected = jdbc.update(con -> {
                 PreparedStatement ps = con.prepareStatement(
-                    "INSERT INTO items (owner_uid, name, description, starting_price, current_highest_bid, highest_bidder_uid, is_closed) VALUES (?, ?, ?, ?, ?, ?, ?)",
+                    "INSERT INTO items (owner_uid, name, description, starting_price, current_highest_bid, highest_bidder_uid, auction_end_time, is_closed) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
                     Statement.RETURN_GENERATED_KEYS
                 );
                 ps.setInt(1, item.getOwnerUid());
@@ -35,7 +43,8 @@ public class SqliteAuctionDAO {
                 ps.setDouble(4, item.getStartingPrice());
                 ps.setDouble(5, item.getStartingPrice()); // Initial bid is starting price
                 ps.setInt(6, -1); // -1 to indicate no bidder yet
-                ps.setInt(7, 0);  // 0 means false
+                ps.setLong(7, finalEndTime);
+                ps.setInt(8, item.isClosed() ? 1 : 0);  // Use the value from the item
                 return ps;
             }, kh);
 
@@ -52,7 +61,7 @@ public class SqliteAuctionDAO {
 
     public List<Item> fetchAllItems() {
         return jdbc.query(
-            "SELECT * FROM items WHERE is_closed = 0",
+            "SELECT * FROM items",
             (rs, rowNum) -> mapRowToItem(rs)
         );
     }
@@ -78,12 +87,13 @@ public class SqliteAuctionDAO {
     public boolean updateItem(Item item) {
         try {
             int rowsAffected = jdbc.update(
-                "UPDATE items SET name = ?, description = ?, starting_price = ?, current_highest_bid = ?, highest_bidder_uid = ?, is_closed = ? WHERE id = ?",
+                "UPDATE items SET name = ?, description = ?, starting_price = ?, current_highest_bid = ?, highest_bidder_uid = ?, auction_end_time = ?, is_closed = ? WHERE id = ?",
                 item.getName(),
                 item.getDescription(),
                 item.getStartingPrice(),
                 item.getCurrentHighestBid(),
                 item.getHighestBidderUid(),
+                item.getAuctionEndTime(),
                 item.isClosed() ? 1 : 0,
                 item.getId()
             );
@@ -116,6 +126,7 @@ public class SqliteAuctionDAO {
         item.setStartingPrice(rs.getDouble("starting_price"));
         item.setCurrentHighestBid(rs.getDouble("current_highest_bid"));
         item.setHighestBidderUid(rs.getInt("highest_bidder_uid"));
+        item.setAuctionEndTime(rs.getLong("auction_end_time"));
         item.setClosed(rs.getInt("is_closed") == 1);
         return item;
     }

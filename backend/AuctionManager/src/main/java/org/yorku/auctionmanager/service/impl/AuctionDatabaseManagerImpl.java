@@ -92,7 +92,12 @@ public class AuctionDatabaseManagerImpl implements AuctionDatabaseManager {
             existingItem.setDescription(modifiedItemData.getDescription());
             existingItem.setCurrentHighestBid(modifiedItemData.getCurrentHighestBid());
             existingItem.setHighestBidderUid(modifiedItemData.getHighestBidderUid());
-            existingItem.setClosed(modifiedItemData.isClosed()); 
+            existingItem.setClosed(modifiedItemData.isClosed());
+            
+            // Allow updating the auction end time (e.g. when activating a previously inactive auction)
+            if (modifiedItemData.getAuctionEndTime() > 0) {
+                existingItem.setAuctionEndTime(modifiedItemData.getAuctionEndTime());
+            }
 
             boolean isUpdated = auctionDAO.updateItem(existingItem);
             

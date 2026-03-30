@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
-import { authenticate } from "../services/accountApi";
 import { fetchCatalogue } from "../services/auctionApi";
 import { fetchPendingPayments } from "../services/paymentApi";
 import { getAccountUID, getSessionToken } from "../utils/storage";
@@ -25,12 +24,8 @@ export default function PendingPaymentsPage() {
                     return;
                 }
 
-                const authResponse = await authenticate(sessionToken, accountUID);
-                const secret =
-                    authResponse?.authenticatedRequest?.secret || sessionToken;
-
                 const [pendingData, catalogueData] = await Promise.all([
-                    fetchPendingPayments(secret, accountUID),
+                    fetchPendingPayments(sessionToken, accountUID),
                     fetchCatalogue(),
                 ]);
 

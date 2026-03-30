@@ -1,4 +1,4 @@
-const API_BASE = "http://localhost:8081";
+const API_BASE = "http://localhost:8080"; // Call the GatewayManager instead
 
 async function handleResponse(response) {
     let data = null;
@@ -52,29 +52,30 @@ export async function authenticate(sessionToken, accountUID) {
         },
         body: JSON.stringify({
             sessionToken,
-            request: {
-                accountUID: Number(accountUID),
-            },
+            request: { accountUID: Number(accountUID) },
         }),
     });
 
     return handleResponse(response);
 }
 
-export async function fetchAccount(authenticatedRequest) {
+export async function fetchAccount(sessionToken, accountUID) {
     const response = await fetch(`${API_BASE}/fetchaccount`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
         },
-        body: JSON.stringify(authenticatedRequest),
+        body: JSON.stringify({
+            sessionToken,
+            accountUID: Number(accountUID),
+        }),
     });
 
     return handleResponse(response);
 }
 
 export async function startForgotPassword(accountUID) {
-    const response = await fetch(`${API_BASE}/forgotpassword/request`, {
+    const response = await fetch(`${API_BASE}/resetpassword/request`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -88,16 +89,12 @@ export async function startForgotPassword(accountUID) {
 }
 
 export async function resetPassword(payload) {
-    const response = await fetch(`${API_BASE}/forgotpassword`, {
+    const response = await fetch(`${API_BASE}/resetpassword`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-            accountUID: Number(payload.accountUID),
-            forgotPasswordRescueCode: payload.forgotPasswordRescueCode,
-            newPassword: payload.newPassword,
-        }),
+        body: JSON.stringify(payload),
     });
 
     return handleResponse(response);

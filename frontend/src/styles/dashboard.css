@@ -47,7 +47,96 @@
     line-height: 1.7;
 }
 
+.bid-button {
+    background-color: #ff9900;
+    color: white;
+    border: none;
+    padding: 0.75rem;
+    border-radius: 6px;
+    font-size: 1rem;
+    cursor: pointer;
+    font-weight: bold;
+    width: 100%;
+}
 
+.bid-button:hover {
+    background-color: #e68a00;
+}
+
+.bid-button:disabled {
+    background-color: #cccccc;
+    color: #666666;
+    cursor: not-allowed;
+    border: 1px solid #aaaaaa;
+}
+
+.search-bar {
+    margin: 30px 0;
+    display: flex;
+    justify-content: center;
+}
+
+.search-input {
+    width: 100%;
+    max-width: 800px;
+    padding: 14px 24px;
+    font-size: 1.1rem;
+    border: 2px solid #ccc;
+    border-radius: 8px;
+    outline: none;
+    transition: border-color 0.2s;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.search-input:focus {
+    border-color: #0066cc;
+}
+
+/* Base item card styling already matches dashboard UI framework implicitly, but appending classes for animations/highlights: */
+
+.item-card {
+    transition: transform 0.2s, box-shadow 0.2s, background-color 0.5s ease-out, border-color 0.5s ease;
+    border: 2px solid transparent; /* default */
+    padding: 20px;
+    background-color: white;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.item-card.winning-bid {
+    background-color: #d4edda;
+    border-color: #28a745;
+}
+
+.winning-badge {
+    background-color: #28a745;
+    color: white;
+    font-size: 0.85rem;
+    font-weight: bold;
+    padding: 4px 8px;
+    border-radius: 4px;
+    text-align: center;
+    margin-bottom: 5px;
+}
+
+.item-card.outbid {
+    animation: flash-red 3s ease-out;
+}
+
+@keyframes flash-red {
+    0% { background-color: #f8dbdf; border-color: #dc3545; }
+    20% { background-color: #f8dbdf; border-color: #dc3545; }
+    100% { background-color: white; border-color: transparent; }
+}
+
+.items-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 24px;
+}
 
 @media (max-width: 800px) {
 

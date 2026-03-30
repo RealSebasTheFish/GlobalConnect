@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import Navbar from "../components/Navbar";
-import { authenticate, fetchAccount } from "../services/accountApi";
+import { fetchAccount } from "../services/accountApi";
 import { fetchCatalogue } from "../services/auctionApi";
 import { fetchPendingPayments, pay } from "../services/paymentApi";
 import { getAccountUID, getSessionToken } from "../utils/storage";
@@ -78,32 +78,22 @@ export default function PaymentPage() {
                 const sessionToken = getSessionToken();
                 const accountUID = getAccountUID();
 
-                if (!sessionToken || !accountUID) {
-                    navigate("/login");
-                    return;
+                if (!sessionToken || !accountUID || !itemId) {
+                    throw new Error("Missing required session, account, or item info.");
                 }
 
-                if (!Number.isFinite(itemId) || itemId <= 0) {
-                    setError("Missing or invalid item id for payment.");
-                    return;
-                }
+                const [pendingResponse, catalogueData, accountData] = await Promise.all([
+                    fetchPendingPayments(sessionToken, accountUID),
+                    fetchCatalogue(),
+                    fetchAccount(sessionToken, accountUID)
+                ]);
 
-                const authResponse = await authenticate(sessionToken, accountUID);
-                const authSecret = authResponse?.authenticatedRequest?.secret || sessionToken;
-                setSecret(authSecret);
-
-                const numericAccountUID = Number(accountUID);
-                const pendingResponse = await fetchPendingPayments(
-                    authSecret,
-                    numericAccountUID
-                );
                 const hasPendingPaymentForItem = (pendingResponse?.pendingPayments || []).some(
                     (payment) => Number(payment?.itemId) === Number(itemId)
                 );
 
-                const catalogueResponse = await fetchCatalogue();
-                const matchedItem = catalogueResponse?.items?.find((i) => i.id === itemId) || null;
-                const ownsItem = matchedItem && Number(matchedItem.highestBidderUid) === numericAccountUID;
+                const matchedItem = catalogueData?.items?.find((i) => i.id === itemId) || null;
+                const ownsItem = matchedItem && Number(matchedItem.highestBidderUid) === Number(accountUID);
 
                 if (!hasPendingPaymentForItem || !ownsItem) {
                     navigate("/pending-payments", { replace: true });
@@ -113,11 +103,9 @@ export default function PaymentPage() {
                 setIsAuthorizedForItem(true);
                 setItem(matchedItem);
 
-                const accountResponse = await fetchAccount(
-                    authResponse?.authenticatedRequest
-                );
-                const fetchedAccount = accountResponse?.accounts?.[0] || null;
-                setAccount(fetchedAccount);
+                setAccount(accountData?.accounts?.[0] || null);
+                setSecret(sessionToken);
+
             } catch (err) {
                 setError("Could not load payment details.");
             } finally {

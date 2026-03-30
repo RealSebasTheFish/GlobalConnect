@@ -10,6 +10,7 @@ public class Item {
     private double startingPrice;
     private double currentHighestBid;
     private int highestBidderUid;
+    private long auctionEndTime; // Timestamp in milliseconds
     
     @JsonProperty("closed")
     private boolean isClosed;
@@ -24,6 +25,8 @@ public class Item {
         this.startingPrice = startingPrice;
         this.currentHighestBid = startingPrice;
         this.isClosed = false;
+        // Default 5 minutes from now if not specified
+        this.auctionEndTime = System.currentTimeMillis() + (5 * 60 * 1000);
     }
 
     public int getId() { return id; }
@@ -46,6 +49,9 @@ public class Item {
 
     public int getHighestBidderUid() { return highestBidderUid; }
     public void setHighestBidderUid(int highestBidderUid) { this.highestBidderUid = highestBidderUid; }
+
+    public long getAuctionEndTime() { return auctionEndTime; }
+    public void setAuctionEndTime(long auctionEndTime) { this.auctionEndTime = auctionEndTime; }
 
     @JsonProperty("closed")
     public boolean isClosed() { return isClosed; }

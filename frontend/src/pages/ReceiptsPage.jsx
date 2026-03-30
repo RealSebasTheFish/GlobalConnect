@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
-import { authenticate } from "../services/accountApi";
 import { fetchCatalogue } from "../services/auctionApi";
 import { fetchReceipts } from "../services/paymentApi";
 import { getAccountUID, getSessionToken } from "../utils/storage";
@@ -45,16 +44,12 @@ export default function ReceiptsPage() {
                     return;
                 }
 
-                const authResponse = await authenticate(sessionToken, accountUID);
-                const secret =
-                    authResponse?.authenticatedRequest?.secret || sessionToken;
-
-                const [receiptsData, catalogueData] = await Promise.all([
-                    fetchReceipts(secret, accountUID),
+                const [receiptsResponse, catalogueData] = await Promise.all([
+                    fetchReceipts(sessionToken, accountUID),
                     fetchCatalogue(),
                 ]);
 
-                setReceipts(receiptsData?.receipts || []);
+                setReceipts(receiptsResponse?.receipts || []);
 
                 const names = Object.fromEntries(
                     (catalogueData?.items || []).map((item) => [

@@ -32,6 +32,15 @@ export default function Navbar() {
 
                     {open && (
                         <div className="dropdown-menu">
+							<Link to="/dashboard" onClick={() => setOpen(false)}>
+	                            Catalogue
+	                        </Link>
+							<Link to="/item-manager" onClick={() => setOpen(false)}>
+	                            Items Management
+	                        </Link>
+                            <Link to="/history" onClick={() => setOpen(false)}>
+                                Bid History
+                            </Link>
                             <Link to="/account" onClick={() => setOpen(false)}>
                                 Account Info
                             </Link>
