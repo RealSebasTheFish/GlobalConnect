@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import { fetchCatalogue, placeBid } from "../services/auctionApi";
 import { getAccountUID, getSessionToken } from "../utils/storage";
+import { SmartBidAdvisorPanel } from "../features/smartBidAdvisor";
 import "../styles/bidPage.css";
 
 export default function BidPage() {
@@ -104,6 +105,39 @@ export default function BidPage() {
 
     const handleBidChange = (e) => {
         setBidAmount(e.target.value);
+    };
+
+    const backendBidHistory = Array.isArray(item?.bidHistory) ? item.bidHistory : [];
+    const localBidHistory = (() => {
+        const history = JSON.parse(localStorage.getItem(`bid_history_${accountUID}`) || "[]");
+        return Array.isArray(history)
+            ? history
+                .filter((entry) => Number(entry?.itemId) === Number(item?.id))
+                .map((entry) => ({
+                    bidderUID: accountUID,
+                    bidAmount: Number(entry?.bidAmount ?? 0),
+                    bidTime: entry?.timestamp,
+                }))
+            : [];
+    })();
+    const advisorBidHistory = [...backendBidHistory, ...localBidHistory].sort(
+        (a, b) => Number(a?.bidTime ?? 0) - Number(b?.bidTime ?? 0)
+    );
+
+    const timeLeftMs = (() => {
+        if (!item?.auctionEndTime) {
+            return 0;
+        }
+        const endTime = Number(item.auctionEndTime);
+        return Math.max(endTime - Date.now(), 0);
+    })();
+
+    const advisorContext = {
+        timeLeftLabel: timeLeft,
+        timeLeftMs,
+        totalBids: advisorBidHistory.length,
+        myLatestBidAmount: localBidHistory[localBidHistory.length - 1]?.bidAmount ?? 0,
+        myIsCurrentHighestBidder: item?.highestBidderUid === accountUID,
     };
 
     const handlePlaceBid = async (e) => {
@@ -274,6 +308,17 @@ export default function BidPage() {
                         </div>
                     );
                 })()}
+
+                {item && (
+                    <section className="bid-advisor-section" aria-label="AI bidding advisor section">
+                        <SmartBidAdvisorPanel
+                            className="sba-layout-wide"
+                            item={item}
+                            bidHistory={advisorBidHistory}
+                            auctionContext={advisorContext}
+                        />
+                    </section>
+                )}
             </main>
         </div>
     );

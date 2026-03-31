@@ -257,6 +257,10 @@
     cursor: not-allowed;
 }
 
+.bid-advisor-section {
+    margin-top: 2rem;
+}
+
 .form-error {
     background-color: #f8dbdf;
     color: #721c24;
@@ -297,4 +301,5 @@
     .bid-action-section {
         width: 100%;
     }
+
 }

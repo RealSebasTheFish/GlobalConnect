@@ -1,0 +1,72 @@
+.sba-test-page {
+    min-height: 100vh;
+    display: grid;
+    gap: 16px;
+    padding: 18px;
+    background: radial-gradient(circle at 12% 10%, #f4fffb 0%, #ecf5f1 40%, #e8efec 100%);
+}
+
+.sba-test-toolbar,
+.sba-test-debug {
+    border: 1px solid #cfe1d8;
+    border-radius: 14px;
+    background: #ffffff;
+    padding: 14px;
+}
+
+.sba-test-toolbar h1,
+.sba-test-debug h2 {
+    margin: 0;
+}
+
+.sba-test-toolbar p {
+    margin: 8px 0 0;
+    color: #496259;
+}
+
+.sba-test-toolbar label {
+    display: block;
+    margin-top: 10px;
+    font-size: 0.92rem;
+    color: #496259;
+}
+
+.sba-test-toolbar select,
+.sba-test-toolbar input {
+    width: 100%;
+    margin-top: 6px;
+    border: 1px solid #cfe1d8;
+    border-radius: 10px;
+    padding: 9px 11px;
+    background: #ffffff;
+}
+
+.sba-test-note {
+    margin-top: 10px;
+    font-size: 0.9rem;
+}
+
+.sba-test-debug pre {
+    margin: 10px 0 0;
+    border-radius: 10px;
+    background: #edf7f3;
+    padding: 10px;
+    overflow-x: auto;
+    font-size: 0.85rem;
+}
+
+@media (min-width: 1000px) {
+    .sba-test-page {
+        grid-template-columns: minmax(300px, 440px) minmax(500px, 1fr);
+        align-items: start;
+    }
+
+    .sba-test-panel-wrap {
+        grid-column: 2;
+        grid-row: 1 / span 2;
+    }
+
+    .sba-test-debug {
+        grid-column: 1;
+    }
+}

@@ -27,8 +27,8 @@ export default function AccountPage() {
 
             try {
                 const acct = await fetchAccount(token, accountUID);
-                if (acct && acct.accounts && acct.accounts.length > 0) {
-                    setAccount(acct.accounts[0]);
+                if (acct && acct.account) {
+                    setAccount(acct.account);
                 } else {
                     setError("Account details not found.");
                 }
