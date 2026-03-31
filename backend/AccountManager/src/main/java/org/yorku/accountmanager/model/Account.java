@@ -1,5 +1,10 @@
 package org.yorku.accountmanager.model;
 
+import java.util.Map;
+import java.util.HashMap;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class Account {
     private int accountUID;     
     private String username;
@@ -109,5 +114,14 @@ public class Account {
 		this.email = email;
 	}
 
-    
+	@JsonProperty("address")
+    public Map<String, Object> getAddress() {
+        Map<String, Object> address = new HashMap<>();
+        address.put("streetName", streetName);
+        address.put("streetNumber", streetNumber);
+        address.put("city", city);
+        address.put("country", country);
+        address.put("postalCode", postalCode);
+        return address;
+    }
 }

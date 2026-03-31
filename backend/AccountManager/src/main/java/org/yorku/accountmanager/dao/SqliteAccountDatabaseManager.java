@@ -146,6 +146,19 @@ public class SqliteAccountDatabaseManager implements AccountDatabaseManager {
     }
 
     @Override
+    public Integer findAccountUIDByUsername(String username) {
+        try {
+            return jdbc.queryForObject(
+                    "SELECT accountUID FROM accounts WHERE username = ?",
+                    Integer.class,
+                    username
+            );
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    @Override
     public boolean checkCreds(int accountUID, String hashedPassword) {
         try {
             Integer count = jdbc.queryForObject(

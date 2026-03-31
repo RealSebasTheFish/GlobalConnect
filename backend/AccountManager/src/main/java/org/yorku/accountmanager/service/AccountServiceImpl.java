@@ -37,8 +37,21 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public SessionResponse createSession(LoginRequest req) {
+        if (req == null || req.getUsername() == null || req.getUsername().isBlank() || req.getPassword() == null) {
+            return new SessionResponse(5, null);
+        }
+
+        Integer accountUID = accountDb.findAccountUIDByUsername(req.getUsername());
+        if (accountUID == null || accountUID <= 0) {
+            return new SessionResponse(5, null);
+        }
+
         String hashed = PasswordUtil.sha256(req.getPassword());
-        return sessionManager.createSession(req.getAccountUID(), hashed);
+        SessionResponse response = sessionManager.createSession(accountUID, hashed);
+        if (response.getErrorCode() == 0) {
+            response.setAccountUID(accountUID);
+        }
+        return response;
     }
 
     @Override

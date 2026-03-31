@@ -149,7 +149,7 @@ public class GatewayController {
                 out.setAccount(created);
 
                 AccountServiceLoginRequest loginRequest = new AccountServiceLoginRequest();
-                loginRequest.setAccountUID(created.getAccountUID());
+                loginRequest.setUsername(created.getUsername());
                 loginRequest.setPassword(request.getPassword());
 
                 try {
@@ -181,13 +181,13 @@ public class GatewayController {
     public ResponseEntity<LoginCallResponse> login(@RequestBody LoginCallRequest request) {
         LoginCallResponse out = new LoginCallResponse();
 
-        if (request == null || request.getAccountUID() <= 0 || isBlank(request.getPassword())) {
-            return badRequest(error(out, 1, "Missing accountUID or password."));
+        if (request == null || isBlank(request.getUsername()) || isBlank(request.getPassword())) {
+            return badRequest(error(out, 1, "Missing username or password."));
         }
 
         try {
             AccountServiceLoginRequest microRequest = new AccountServiceLoginRequest();
-            microRequest.setAccountUID(request.getAccountUID());
+            microRequest.setUsername(request.getUsername());
             microRequest.setPassword(request.getPassword());
 
             AccountServiceSessionResponse loginResp = restTemplate.postForObject(
@@ -202,6 +202,7 @@ public class GatewayController {
 
             out.setErrorCode(loginResp.getErrorCode());
             out.setSessionToken(loginResp.getSessionToken());
+            out.setAccountUID(loginResp.getAccountUID());
             out.setMessage(defaultMessage(loginResp.getErrorCode(), "Login failed."));
 
             return loginResp.getErrorCode() == 0 ? ok(out) : unauthorized(out);
