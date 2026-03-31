@@ -5,6 +5,10 @@ async function handleResponse(response) {
 
     try {
         data = await response.json();
+
+        if (data && data.account && data.account.address) {
+            data.account = {...data.account, ...data.account.address};
+        };
     } catch {
         data = null;
     }
@@ -21,6 +25,14 @@ async function handleResponse(response) {
 }
 
 export async function signup(payload) {
+    payload.address = {
+        "city" : payload.city,
+        "country" : payload.country,
+        "postalCode" : payload.postalCode,
+        "streetName" : payload.streetName,
+        "streetNumber" : payload.streetNumber
+    };
+
     const response = await fetch(`${API_BASE}/signup`, {
         method: "POST",
         headers: {
