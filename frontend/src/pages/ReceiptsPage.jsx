@@ -26,6 +26,14 @@ function formatDate(value) {
     return parsed.toLocaleString();
 }
 
+function getTotalPaid(receipt) {
+    return (
+        Number(receipt?.amount || 0) +
+        Number(receipt?.shippingCost || 0) +
+        Number(receipt?.expeditedExtraCost || 0)
+    );
+}
+
 export default function ReceiptsPage() {
     const navigate = useNavigate();
     const [receipts, setReceipts] = useState([]);
@@ -94,46 +102,51 @@ export default function ReceiptsPage() {
                                     className="receipt-item"
                                     key={`${receipt.itemId}-${receipt.date}-${index}`}
                                 >
-                                    <div>
-                                        <label>Item ID</label>
-                                        <p>{receipt.itemId}</p>
+                                    <div className="receipt-top">
+                                        <div>
+                                            <p className="receipt-small">Receipt for item #{receipt.itemId}</p>
+                                            <h3>
+                                                {itemNamesById[Number(receipt.itemId)] || "Unknown Item"}
+                                            </h3>
+                                        </div>
+
+                                        <div className="receipt-total-block">
+                                            <label>Total Paid</label>
+                                            <p>{formatCurrency(getTotalPaid(receipt))}</p>
+                                        </div>
                                     </div>
 
-                                    <div>
-                                        <label>Item Name</label>
-                                        <p>
-                                            {itemNamesById[Number(receipt.itemId)] || "Unknown Item"}
-                                        </p>
+                                    <div className="receipt-summary">
+                                        <div className="receipt-summary-pill">
+                                            <label>Item Price</label>
+                                            <p>{formatCurrency(receipt.amount)}</p>
+                                        </div>
+
+                                        <div className="receipt-summary-pill">
+                                            <label>Shipping</label>
+                                            <p>{formatCurrency(receipt.shippingCost)}</p>
+                                        </div>
+
+                                        <div className="receipt-summary-pill">
+                                            <label>Expedited</label>
+                                            <p>
+                                                {receipt.expeditedShipping
+                                                    ? formatCurrency(receipt.expeditedExtraCost)
+                                                    : "No"}
+                                            </p>
+                                        </div>
                                     </div>
 
-                                    <div>
-                                        <label>Amount</label>
-                                        <p>{formatCurrency(receipt.amount)}</p>
-                                    </div>
+                                    <div className="receipt-details">
+                                        <div className="receipt-detail">
+                                            <label>Payment Method</label>
+                                            <p>{receipt.paymentMethod || "N/A"}</p>
+                                        </div>
 
-                                    <div>
-                                        <label>Payment Method</label>
-                                        <p>{receipt.paymentMethod || "N/A"}</p>
-                                    </div>
-
-                                    <div>
-                                        <label>Shipping Cost</label>
-                                        <p>{formatCurrency(receipt.shippingCost)}</p>
-                                    </div>
-
-                                    <div>
-                                        <label>Expedited Shipping</label>
-                                        <p>{receipt.expeditedShipping ? "Yes" : "No"}</p>
-                                    </div>
-
-                                    <div>
-                                        <label>Expedited Extra Cost</label>
-                                        <p>{formatCurrency(receipt.expeditedExtraCost)}</p>
-                                    </div>
-
-                                    <div className="full-width">
-                                        <label>Date</label>
-                                        <p>{formatDate(receipt.date)}</p>
+                                        <div className="receipt-detail">
+                                            <label>Date</label>
+                                            <p>{formatDate(receipt.date)}</p>
+                                        </div>
                                     </div>
                                 </article>
                             ))}

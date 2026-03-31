@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import { fetchCatalogue } from "../services/auctionApi";
-import { fetchPendingPayments } from "../services/paymentApi";
+import { fetchPendingPayments, fetchReceipts } from "../services/paymentApi";
 import { getAccountUID, getSessionToken } from "../utils/storage";
 import "../styles/pending-payments.css";
 
@@ -24,12 +24,21 @@ export default function PendingPaymentsPage() {
                     return;
                 }
 
-                const [pendingData, catalogueData] = await Promise.all([
+                const [pendingData, receiptsData, catalogueData] = await Promise.all([
                     fetchPendingPayments(sessionToken, accountUID),
+                    fetchReceipts(sessionToken, accountUID),
                     fetchCatalogue(),
                 ]);
 
-                setPendingPayments(pendingData?.pendingPayments || []);
+                const paidItemIds = new Set(
+                    (receiptsData?.receipts || []).map((receipt) => Number(receipt?.itemId))
+                );
+
+                setPendingPayments(
+                    (pendingData?.pendingPayments || []).filter(
+                        (payment) => !paidItemIds.has(Number(payment?.itemId))
+                    )
+                );
 
                 const names = Object.fromEntries(
                     (catalogueData?.items || []).map((item) => [
@@ -74,27 +83,37 @@ export default function PendingPaymentsPage() {
                                     className="pending-payment-item"
                                     key={`${payment.accountUID}-${payment.itemId}-${index}`}
                                 >
-                                    <div>
-                                        <label>Item Name</label>
-                                        <p>
-                                            {itemNamesById[Number(payment.itemId)] || "Unknown Item"}
-                                        </p>
+                                    <div className="pending-payment-top">
+                                        <div>
+                                            <h3>
+                                                {itemNamesById[Number(payment.itemId)] || "Unknown Item"}
+                                            </h3>
+                                        </div>
                                     </div>
 
-                                    <div>
-                                        <label>Item ID</label>
-                                        <p>{payment.itemId}</p>
+                                    <div className="pending-payment-details">
+                                        <div className="pending-payment-detail">
+                                            <label>Item ID</label>
+                                            <p>{payment.itemId}</p>
+                                        </div>
+
+                                        <div className="pending-payment-detail">
+                                            <label>Status</label>
+                                            <p>Awaiting payment</p>
+                                        </div>
                                     </div>
 
-                                    <button
-                                        type="button"
-                                        className="pending-payment-details-btn"
-                                        onClick={() =>
-                                            navigate(`/payment?itemId=${payment.itemId}`)
-                                        }
-                                    >
-                                        Pay Now
-                                    </button>
+                                    <div className="pending-payment-actions">
+                                        <button
+                                            type="button"
+                                            className="pending-payment-details-btn"
+                                            onClick={() =>
+                                                navigate(`/payment?itemId=${payment.itemId}`)
+                                            }
+                                        >
+                                            Pay Now
+                                        </button>
+                                    </div>
                                 </article>
                             ))}
                         </div>

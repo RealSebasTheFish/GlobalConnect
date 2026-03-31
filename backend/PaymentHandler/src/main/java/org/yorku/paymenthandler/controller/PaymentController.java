@@ -4,6 +4,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.yorku.paymenthandler.dto.PaymentDatabaseResponse;
 import org.yorku.paymenthandler.dto.PaymentResponse;
 import org.yorku.paymenthandler.model.AuthenticatedRequest;
@@ -13,6 +14,7 @@ import org.yorku.paymenthandler.service.PaymentDatabaseManager;
 import org.yorku.paymenthandler.service.PaymentProcessor;
 import org.yorku.paymenthandler.model.*;
 
+@CrossOrigin(origins = "http://localhost:5173")
 @RestController
 @RequestMapping("/api/payment")
 public class PaymentController {
