@@ -24,6 +24,9 @@ import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+
 import org.yorku.gatewaymanager.dto.call.additem.AddItemCallRequest;
 import org.yorku.gatewaymanager.dto.call.additem.AddItemCallResponse;
 import org.yorku.gatewaymanager.dto.call.authenticate.AuthenticateCallRequest;
@@ -975,10 +978,12 @@ public class GatewayController {
     }
 
     private <T extends Response> ResponseEntity<T> ok(T body) {
+        addGenericLinks(body);
         return ResponseEntity.ok(body);
     }
 
     private <T extends Response> ResponseEntity<T> created(T body) {
+        addGenericLinks(body);
         return ResponseEntity.status(HttpStatus.CREATED).body(body);
     }
 
@@ -996,6 +1001,16 @@ public class GatewayController {
 
     private <T extends Response> ResponseEntity<T> downstreamError(T body) {
         return ResponseEntity.status(HttpStatus.BAD_GATEWAY).body(body);
+    }
+
+    private <T extends Response> void addGenericLinks(T response) {
+        try {
+            // Adds standardized generic HATEOAS navigation links directly to all successful responses
+            response.add(linkTo(methodOn(GatewayController.class).health()).withRel("health"));
+            response.add(linkTo(methodOn(GatewayController.class).fetchCatalogue(null)).withRel("catalogue"));
+        } catch (Exception ignored) {
+            // Failsafe in case proxying intercepts or method building fails internally
+        }
     }
 
     private <T extends Response> ResponseEntity<T> mapDownstreamStatus(org.springframework.http.HttpStatusCode status, T body) {

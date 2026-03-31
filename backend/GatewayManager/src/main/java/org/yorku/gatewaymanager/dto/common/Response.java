@@ -1,6 +1,8 @@
 package org.yorku.gatewaymanager.dto.common;
 
-public class Response {
+import org.springframework.hateoas.RepresentationModel;
+
+public class Response extends RepresentationModel<Response> {
     private int errorCode;
     private String message;
 
