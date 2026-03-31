@@ -3,6 +3,7 @@ package org.yorku.gatewaymanager.dto.micro.account;
 public class AccountServiceSessionResponse {
     private int errorCode;
     private String sessionToken;
+    private Integer accountUID;
 
     public AccountServiceSessionResponse() {
     }
@@ -21,5 +22,13 @@ public class AccountServiceSessionResponse {
 
     public void setSessionToken(String sessionToken) {
         this.sessionToken = sessionToken;
+    }
+
+    public Integer getAccountUID() {
+        return accountUID;
+    }
+
+    public void setAccountUID(Integer accountUID) {
+        this.accountUID = accountUID;
     }
 }

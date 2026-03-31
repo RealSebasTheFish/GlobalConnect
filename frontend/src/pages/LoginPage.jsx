@@ -8,7 +8,7 @@ export default function LoginPage() {
     const navigate = useNavigate();
 
     const [form, setForm] = useState({
-        accountUID: "",
+        username: "",
         password: "",
     });
     const [message, setMessage] = useState("");
@@ -27,15 +27,15 @@ export default function LoginPage() {
 
         try {
             const data = await login({
-                accountUID: Number(form.accountUID),
+                username: form.username,
                 password: form.password,
             });
 
-            saveSession(data.sessionToken, form.accountUID);
+            saveSession(data.sessionToken, data.accountUID);
             setMessage("Login successful.");
             navigate("/dashboard");
         } catch (err) {
-            setError("Login failed. Check your Account ID and password.");
+            setError("Login failed. Check your username and password.");
         } finally {
             setLoading(false);
         }
@@ -44,14 +44,14 @@ export default function LoginPage() {
     return (
         <AuthLayout
             title="Login"
-            subtitle="Use your Account ID and password to sign in."
+            subtitle="Use your username and password to sign in."
         >
             <form onSubmit={handleSubmit} className="auth-form">
                 <input
-                    type="number"
-                    name="accountUID"
-                    placeholder="Enter your Account ID"
-                    value={form.accountUID}
+                    type="text"
+                    name="username"
+                    placeholder="Enter your username"
+                    value={form.username}
                     onChange={handleChange}
                     required
                 />

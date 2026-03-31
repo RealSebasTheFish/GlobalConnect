@@ -5,19 +5,19 @@ import org.yorku.gatewaymanager.dto.common.Request;
 
 
 public class LoginCallRequest extends Request {
-    private int accountUID;
+    private String username;
     private String password;
 
     public LoginCallRequest() {
         super("LoginCallRequest");
     }
 
-    public int getAccountUID() {
-        return accountUID;
+    public String getUsername() {
+        return username;
     }
 
-    public void setAccountUID(int accountUID) {
-        this.accountUID = accountUID;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getPassword() {

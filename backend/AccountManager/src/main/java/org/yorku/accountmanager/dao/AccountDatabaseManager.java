@@ -9,6 +9,7 @@ public interface AccountDatabaseManager {
     AccountDatabaseResponse createAccount(Account account);
     AccountDatabaseResponse resetPassword(int accountUID, String forgotPasswordRescueCode);
     AccountDatabaseResponse fetchAccount(AuthenticatedRequest authenticatedRequest);
+    Integer findAccountUIDByUsername(String username);
     boolean checkCreds(int accountUID, String hashedPassword);
     //Stub
     AccountDatabaseResponse pushAuctionUpdate(Object auctionUpdate);
