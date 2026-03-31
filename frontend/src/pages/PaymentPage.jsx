@@ -3,12 +3,14 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import { fetchAccount } from "../services/accountApi";
 import { fetchCatalogue } from "../services/auctionApi";
-import { fetchPendingPayments, pay } from "../services/paymentApi";
+import { fetchPendingPayments, fetchReceipts, pay } from "../services/paymentApi";
 import { getAccountUID, getSessionToken } from "../utils/storage";
 import "../styles/payment.css";
 
 const DEFAULT_SHIPPING_COST = 10;
 const DEFAULT_SHIPPING_DAYS = 5;
+const EXPEDITED_SHIPPING_EXTRA_COST = 25;
+const EXPEDITED_SHIPPING_DAYS_REDUCTION = 2;
 
 function formatCurrency(value) {
     return Number(value || 0).toLocaleString(undefined, {
@@ -34,6 +36,55 @@ function getShippingDays(item, itemId) {
     }
 
     return (Number(itemId) % 5) + DEFAULT_SHIPPING_DAYS;
+}
+
+function getExpeditedShippingDays(days) {
+    return Math.max(1, days - EXPEDITED_SHIPPING_DAYS_REDUCTION);
+}
+
+function getCardDigits(value) {
+    return value.replace(/\D/g, "");
+}
+
+function formatCardNumber(value) {
+    return getCardDigits(value)
+        .slice(0, 19)
+        .replace(/(\d{4})(?=\d)/g, "$1 ")
+        .trim();
+}
+
+function isValidCardLength(value) {
+    const digits = getCardDigits(value);
+    return digits.length >= 13 && digits.length <= 19;
+}
+
+function formatExpiryInput(value) {
+    const digits = value.replace(/\D/g, "").slice(0, 4);
+
+    if (digits.length <= 2) {
+        return digits;
+    }
+
+    return `${digits.slice(0, 2)}/${digits.slice(2)}`;
+}
+
+function isValidExpiryDate(value) {
+    const match = value.match(/^(\d{2})\/(\d{2})$/);
+    if (!match) {
+        return false;
+    }
+
+    const month = Number(match[1]);
+    const year = Number(match[2]);
+
+    if (month < 1 || month > 12) {
+        return false;
+    }
+
+    const fullYear = 2000 + year;
+    const expiryDate = new Date(fullYear, month, 0, 23, 59, 59, 999);
+
+    return expiryDate.getTime() >= Date.now();
 }
 
 function buildAddress(account) {
@@ -71,6 +122,7 @@ export default function PaymentPage() {
     const [nameOnCard, setNameOnCard] = useState("");
     const [expDate, setExpDate] = useState("");
     const [securityCode, setSecurityCode] = useState("");
+    const [useExpeditedShipping, setUseExpeditedShipping] = useState(false);
 
     useEffect(() => {
         async function loadPaymentPageData() {
@@ -82,8 +134,9 @@ export default function PaymentPage() {
                     throw new Error("Missing required session, account, or item info.");
                 }
 
-                const [pendingResponse, catalogueData, accountData] = await Promise.all([
+                const [pendingResponse, receiptsResponse, catalogueData, accountData] = await Promise.all([
                     fetchPendingPayments(sessionToken, accountUID),
+                    fetchReceipts(sessionToken, accountUID),
                     fetchCatalogue(),
                     fetchAccount(sessionToken, accountUID)
                 ]);
@@ -92,18 +145,28 @@ export default function PaymentPage() {
                     (payment) => Number(payment?.itemId) === Number(itemId)
                 );
 
+                const existingReceipt =
+                    (receiptsResponse?.receipts || []).find(
+                        (entry) => Number(entry?.itemId) === Number(itemId)
+                    ) || null;
+
                 const matchedItem = catalogueData?.items?.find((i) => i.id === itemId) || null;
                 const ownsItem = matchedItem && Number(matchedItem.highestBidderUid) === Number(accountUID);
 
-                if (!hasPendingPaymentForItem || !ownsItem) {
+                if (existingReceipt) {
+                    setReceipt(existingReceipt);
+                    setSuccessMessage("This item has been paid for.");
+                }
+
+                if ((!hasPendingPaymentForItem && !existingReceipt) || !ownsItem) {
                     navigate("/pending-payments", { replace: true });
                     return;
                 }
 
-                setIsAuthorizedForItem(true);
+                setIsAuthorizedForItem(!existingReceipt);
                 setItem(matchedItem);
 
-                setAccount(accountData?.accounts?.[0] || null);
+                setAccount(accountData?.account || null);
                 setSecret(sessionToken);
 
             } catch (err) {
@@ -134,7 +197,47 @@ export default function PaymentPage() {
     }, [item]);
 
     const shippingDays = useMemo(() => getShippingDays(item, itemId), [item, itemId]);
-    const totalAmount = useMemo(() => itemPrice + shippingCost, [itemPrice, shippingCost]);
+
+    const expeditedExtraCost = useMemo(
+        () => (useExpeditedShipping ? EXPEDITED_SHIPPING_EXTRA_COST : 0),
+        [useExpeditedShipping]
+    );
+
+    const estimatedShippingDays = useMemo(
+        () =>
+            useExpeditedShipping
+                ? getExpeditedShippingDays(shippingDays)
+                : shippingDays,
+        [shippingDays, useExpeditedShipping]
+    );
+
+    const totalAmount = useMemo(
+        () => itemPrice + shippingCost + expeditedExtraCost,
+        [itemPrice, shippingCost, expeditedExtraCost]
+    );
+
+    const receiptShippingCost = useMemo(
+        () => toNumber(receipt?.shippingCost, shippingCost),
+        [receipt, shippingCost]
+    );
+
+    const receiptExpeditedExtraCost = useMemo(
+        () => toNumber(receipt?.expeditedExtraCost, 0),
+        [receipt]
+    );
+
+    const receiptTotalAmount = useMemo(
+        () => toNumber(receipt?.amount, itemPrice) + receiptShippingCost + receiptExpeditedExtraCost,
+        [receipt, itemPrice, receiptShippingCost, receiptExpeditedExtraCost]
+    );
+
+    const receiptShippingDays = useMemo(
+        () =>
+            receipt?.expeditedShipping
+                ? getExpeditedShippingDays(shippingDays)
+                : shippingDays,
+        [receipt, shippingDays]
+    );
 
     async function handleSubmit(event) {
         event.preventDefault();
@@ -147,8 +250,23 @@ export default function PaymentPage() {
             return;
         }
 
+        if (!isValidCardLength(cardNumber)) {
+            setError("Enter a valid credit card number with 13 to 19 digits.");
+            return;
+        }
+
+        if (!/^\d{3}$/.test(securityCode)) {
+            setError("CVV must be exactly 3 numbers.");
+            return;
+        }
+
+        if (!isValidExpiryDate(expDate)) {
+            setError("Enter a valid expiration date in MM/YY format.");
+            return;
+        }
+
         if (!isAuthorizedForItem) {
-            setError("You are not authorized to pay for this item.");
+            setError("This item has already been paid for and cannot be paid again.");
             return;
         }
 
@@ -163,19 +281,20 @@ export default function PaymentPage() {
             const payResponse = await pay(secret, {
                 accountUID,
                 itemId,
-                cardNumber,
-                name: nameOnCard,
+                cardNumber: getCardDigits(cardNumber),
+                name: nameOnCard.trim(),
                 expDate,
                 securityCode,
                 paymentMethod: "Credit Card",
                 amount: itemPrice,
                 shippingCost,
-                expeditedShipping: false,
-                expeditedExtraCost: 0,
+                expeditedShipping: useExpeditedShipping,
+                expeditedExtraCost,
             });
 
             setReceipt(payResponse?.receipt || null);
             setSuccessMessage("Payment cleared successfully.");
+            setIsAuthorizedForItem(false);
         } catch (err) {
             setError(err?.message || "Payment could not be completed.");
         } finally {
@@ -191,7 +310,6 @@ export default function PaymentPage() {
                 <section className="payment-card">
                     <div className="payment-header">
                         <h2>Complete Payment</h2>
-                        <p>Item #{itemId}</p>
                     </div>
 
                     {loading && <p>Loading payment details...</p>}
@@ -204,61 +322,132 @@ export default function PaymentPage() {
                         <>
                             <div className="payment-grid">
                                 <div className="payment-box">
-                                    <h3>Shipping Address</h3>
-                                    <p>{buildAddress(account) || "Address unavailable"}</p>
+                                    <div className="payment-box-header">
+                                        <p className="payment-box-small">Delivery details</p>
+                                        <h3>Shipping Address</h3>
+                                    </div>
+                                    <p className="payment-address">
+                                        {buildAddress(account) || "Address unavailable"}
+                                    </p>
                                 </div>
 
                                 <div className="payment-box">
-                                    <h3>Order Summary</h3>
-                                    <p className="payment-item-name">
-                                        Item: {item?.name || "Unknown Item"}
-                                    </p>
-                                    <p>Item Price: {formatCurrency(itemPrice)}</p>
-                                    <p>Shipping Cost: {formatCurrency(shippingCost)}</p>
-                                    <p className="payment-total">
-                                        Total: {formatCurrency(totalAmount)}
-                                    </p>
+                                    <div className="payment-box-header">
+                                        <p className="payment-box-small">Order summary</p>
+                                        <h3>{item?.name || "Unknown Item"}</h3>
+                                    </div>
+
+                                    <div className="payment-summary-list">
+                                        <div className="payment-summary-row">
+                                            <label>Item Price</label>
+                                            <p>{formatCurrency(itemPrice)}</p>
+                                        </div>
+
+                                        <div className="payment-summary-row">
+                                            <label>Shipping Cost</label>
+                                            <p>{formatCurrency(receipt ? receiptShippingCost : shippingCost)}</p>
+                                        </div>
+
+                                        <div className="payment-summary-row">
+                                            <label>Expedited Shipping</label>
+                                            <p>
+                                                {receipt
+                                                    ? receipt.expeditedShipping
+                                                        ? formatCurrency(receiptExpeditedExtraCost)
+                                                        : "No"
+                                                    : useExpeditedShipping
+                                                        ? formatCurrency(expeditedExtraCost)
+                                                        : "No"}
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <div className="payment-total-block">
+                                        <label>Total</label>
+                                        <p>{formatCurrency(receipt ? receiptTotalAmount : totalAmount)}</p>
+                                    </div>
                                 </div>
                             </div>
 
                             {!receipt && (
                                 <form className="payment-form" onSubmit={handleSubmit}>
-                                    <div className="payment-form-grid">
-                                        <input
-                                            type="text"
-                                            placeholder="Credit Card Number"
-                                            value={cardNumber}
-                                            onChange={(e) =>
-                                                setCardNumber(e.target.value)
-                                            }
-                                            required
-                                        />
-                                        <input
-                                            type="text"
-                                            placeholder="Name On Card"
-                                            value={nameOnCard}
-                                            onChange={(e) =>
-                                                setNameOnCard(e.target.value)
-                                            }
-                                            required
-                                        />
-                                        <input
-                                            type="text"
-                                            placeholder="Expiration Date (MM/YY)"
-                                            value={expDate}
-                                            onChange={(e) => setExpDate(e.target.value)}
-                                            required
-                                        />
-                                        <input
-                                            type="password"
-                                            placeholder="Security Code"
-                                            value={securityCode}
-                                            onChange={(e) =>
-                                                setSecurityCode(e.target.value)
-                                            }
-                                            required
-                                        />
+                                    <div className="payment-form-header">
+                                        <p className="payment-box-small">Payment details</p>
+                                        <h3>Card Information</h3>
                                     </div>
+
+                                    <div className="payment-form-grid">
+                                        <label className="payment-field">
+                                            <span>Credit Card Number</span>
+                                            <input
+                                                type="text"
+                                                placeholder="1234 5678 9012 3456"
+                                                value={cardNumber}
+                                                inputMode="numeric"
+                                                maxLength={23}
+                                                onChange={(e) =>
+                                                    setCardNumber(formatCardNumber(e.target.value))
+                                                }
+                                                required
+                                            />
+                                        </label>
+
+                                        <label className="payment-field">
+                                            <span>Name On Card</span>
+                                            <input
+                                                type="text"
+                                                placeholder="Name on card"
+                                                value={nameOnCard}
+                                                onChange={(e) =>
+                                                    setNameOnCard(e.target.value)
+                                                }
+                                                required
+                                            />
+                                        </label>
+
+                                        <label className="payment-field">
+                                            <span>Expiration Date</span>
+                                            <input
+                                                type="text"
+                                                placeholder="MM/YY"
+                                                value={expDate}
+                                                inputMode="numeric"
+                                                maxLength={5}
+                                                onChange={(e) => setExpDate(formatExpiryInput(e.target.value))}
+                                                required
+                                            />
+                                        </label>
+
+                                        <label className="payment-field">
+                                            <span>Security Code</span>
+                                            <input
+                                                type="password"
+                                                placeholder="CVV"
+                                                value={securityCode}
+                                                inputMode="numeric"
+                                                maxLength={3}
+                                                onChange={(e) =>
+                                                    setSecurityCode(e.target.value.replace(/\D/g, "").slice(0, 3))
+                                                }
+                                                required
+                                            />
+                                        </label>
+                                    </div>
+
+                                    <label className="payment-checkbox">
+                                        <input
+                                            type="checkbox"
+                                            checked={useExpeditedShipping}
+                                            onChange={(e) =>
+                                                setUseExpeditedShipping(e.target.checked)
+                                            }
+                                        />
+                                        <span>
+                                            Add expedited shipping for{" "}
+                                            {formatCurrency(EXPEDITED_SHIPPING_EXTRA_COST)} and
+                                            get estimated delivery in {estimatedShippingDays} days.
+                                        </span>
+                                    </label>
 
                                     <button
                                         type="submit"
@@ -272,13 +461,25 @@ export default function PaymentPage() {
 
                             {receipt && (
                                 <div className="receipt-result">
-                                    <h3>Receipt</h3>
-                                    <p>Payment Method: {receipt.paymentMethod}</p>
-                                    <p>Total Amount Paid: {formatCurrency(totalAmount)}</p>
-                                    <p>
-                                        Shipping Details: The Item will be shipped in{" "}
-                                        {shippingDays} days.
-                                    </p>
+                                    <div className="payment-box-header">
+                                        <p className="payment-box-small">Payment complete</p>
+                                        <h3>Receipt</h3>
+                                    </div>
+                                    <div className="payment-summary-list">
+                                        <div className="payment-summary-row">
+                                            <label>Payment Method</label>
+                                            <p>{receipt.paymentMethod}</p>
+                                        </div>
+                                        <div className="payment-summary-row">
+                                            <label>Total Amount Paid</label>
+                                            <p>{formatCurrency(receiptTotalAmount)}</p>
+                                        </div>
+                                        <div className="payment-summary-row">
+                                            <label>Shipping Details</label>
+                                            <p>The item will be shipped in {receiptShippingDays} days.</p>
+                                        </div>
+                                    </div>
+                                    <br/>
                                     <button
                                         type="button"
                                         className="form-btn"
