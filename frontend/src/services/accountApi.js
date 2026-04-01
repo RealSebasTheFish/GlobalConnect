@@ -97,7 +97,11 @@ export async function startForgotPassword(accountUID) {
         }),
     });
 
-    return handleResponse(response);
+    const data = await handleResponse(response);
+    return {
+        ...data,
+        rescueCode: data?.rescueCode ?? data?.forgotPasswordRescueCode ?? "",
+    };
 }
 
 export async function resetPassword(payload) {

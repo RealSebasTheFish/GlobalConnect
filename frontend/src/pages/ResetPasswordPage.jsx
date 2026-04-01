@@ -3,6 +3,15 @@ import { Link, useLocation } from "react-router-dom";
 import AuthLayout from "../components/AuthLayout";
 import { resetPassword } from "../services/accountApi";
 
+function isStrongPassword(password) {
+    return (
+        password.length >= 8 &&
+        /[a-z]/.test(password) &&
+        /[A-Z]/.test(password) &&
+        /\d/.test(password)
+    );
+}
+
 export default function ResetPasswordPage() {
     const location = useLocation();
     const prefilledUID = location.state?.accountUID || "";
@@ -23,9 +32,15 @@ export default function ResetPasswordPage() {
 
     async function handleSubmit(e) {
         e.preventDefault();
-        setLoading(true);
         setError("");
         setMessage("");
+
+        if (!isStrongPassword(form.newPassword || "")) {
+            setError("Password must be at least 8 characters with uppercase, lowercase, and a number.");
+            return;
+        }
+
+        setLoading(true);
 
         try {
             await resetPassword(form);
@@ -72,6 +87,9 @@ export default function ResetPasswordPage() {
                     placeholder="New password"
                     value={form.newPassword}
                     onChange={handleChange}
+                    minLength={8}
+                    title="At least 8 characters, including uppercase, lowercase, and a number"
+                    autoComplete="new-password"
                     required
                 />
 

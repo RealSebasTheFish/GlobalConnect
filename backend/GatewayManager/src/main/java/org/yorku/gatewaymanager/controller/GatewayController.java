@@ -267,7 +267,10 @@ public class GatewayController {
                 return downstreamError(error(out, 2, "Account service unavailable."));
             }
 
-            Object code = resp.get("forgotPasswordRescueCode");
+            Object code = resp.get("rescueCode");
+            if (code == null) {
+                code = resp.get("forgotPasswordRescueCode");
+            }
             Object errorCode = resp.get("errorCode");
             out.setErrorCode(asInt(errorCode, 2));
             out.setForgotPasswordRescueCode(code == null ? null : code.toString());
