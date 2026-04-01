@@ -208,6 +208,58 @@
               }
             }
           ]
+        },
+        {
+          "name": "Health exposes HATEOAS links",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/health",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "health"
+              ]
+            },
+            "description": "Verifies hypermedia links on gateway health response."
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Health HATEOAS endpoint returns 200\", function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "let body = {};",
+                  "try { body = pm.response.json(); } catch (e) {}",
+                  "pm.test(\"Response includes _links object\", function () {",
+                  "  pm.expect(body).to.have.property(\"_links\");",
+                  "  pm.expect(body._links).to.be.an(\"object\");",
+                  "});",
+                  "pm.test(\"_links.health.href points to /health\", function () {",
+                  "  pm.expect(body._links).to.have.property(\"health\");",
+                  "  pm.expect(body._links.health).to.have.property(\"href\");",
+                  "  pm.expect(String(body._links.health.href)).to.include(\"/health\");",
+                  "});",
+                  "pm.test(\"_links.catalogue.href points to /fetchcatalogue\", function () {",
+                  "  pm.expect(body._links).to.have.property(\"catalogue\");",
+                  "  pm.expect(body._links.catalogue).to.have.property(\"href\");",
+                  "  pm.expect(String(body._links.catalogue.href)).to.include(\"/fetchcatalogue\");",
+                  "});"
+                ]
+              }
+            }
+          ]
         }
       ]
     },
@@ -701,7 +753,7 @@
             "description": "",
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"accountUID\": \"{{resetAccountUID}}\",\n  \"password\": \"{{resetOldPassword}}\"\n}"
+              "raw": "{\n  \"username\": \"{{resetUsername}}\",\n  \"password\": \"{{resetOldPassword}}\"\n}"
             }
           },
           "response": [],
@@ -2060,8 +2112,9 @@
                   "});",
                   "let body = {};",
                   "try { body = pm.response.json(); } catch (e) {}",
-                  "if (body.forgotPasswordRescueCode) {",
-                  "  pm.collectionVariables.set(\"rescueCode\", body.forgotPasswordRescueCode);",
+                  "const code = body.forgotPasswordRescueCode || body.rescueCode || \"\";",
+                  "if (code) {",
+                  "  pm.collectionVariables.set(\"rescueCode\", code);",
                   "}"
                 ]
               }
@@ -2130,7 +2183,7 @@
             "description": "",
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"accountUID\": \"{{resetAccountUID}}\",\n  \"password\": \"{{resetNewPassword}}\"\n}"
+              "raw": "{\n  \"username\": \"{{resetUsername}}\",\n  \"password\": \"{{resetNewPassword}}\"\n}"
             }
           },
           "response": [],
@@ -2194,6 +2247,46 @@
           ]
         },
         {
+          "name": "Signup username with whitespace",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/signup",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "signup"
+              ]
+            },
+            "description": "Checks validation for disallowed spaces in username.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"bad user {{runId}}\",\n  \"password\": \"pass123\",\n  \"email\": \"badspace_{{runId}}@test.com\",\n  \"firstName\": \"Bad\",\n  \"lastName\": \"User\",\n  \"address\": {\n    \"streetName\": \"Main\",\n    \"streetNumber\": \"10\",\n    \"city\": \"Toronto\",\n    \"country\": \"Canada\",\n    \"postalCode\": \"M1M1M1\"\n  }\n}"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Signup username with whitespace returns 400\", function () {",
+                  "  pm.response.to.have.status(400);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
           "name": "Login missing password",
           "request": {
             "method": "POST",
@@ -2234,6 +2327,46 @@
           ]
         },
         {
+          "name": "Authenticate missing sessionToken",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/authenticate",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "authenticate"
+              ]
+            },
+            "description": "Missing token should be rejected before downstream calls.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"sessionToken\": \"\",\n  \"request\": {\n    \"accountUID\": \"{{sellerAccountUID}}\",\n    \"requestType\": \"FetchAccountCallRequest\"\n  }\n}"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Authenticate missing sessionToken returns 400\", function () {",
+                  "  pm.response.to.have.status(400);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
           "name": "Add item negative starting price",
           "request": {
             "method": "POST",
@@ -2266,6 +2399,87 @@
                 "type": "text/javascript",
                 "exec": [
                   "pm.test(\"Negative price additem returns 400\", function () {",
+                  "  pm.response.to.have.status(400);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Reset request missing accountUID",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/resetpassword/request",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "resetpassword",
+                "request"
+              ]
+            },
+            "description": "Missing accountUID should return validation error.",
+            "body": {
+              "mode": "raw",
+              "raw": "{}"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Reset request missing accountUID returns 400\", function () {",
+                  "  pm.response.to.have.status(400);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Reset password missing rescue code",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/resetpassword",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "resetpassword"
+              ]
+            },
+            "description": "Empty rescue code should fail gateway validation.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"accountUID\": \"{{resetAccountUID}}\",\n  \"forgotPasswordRescueCode\": \"\",\n  \"newPassword\": \"{{resetNewPassword}}\"\n}"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Reset missing rescue code returns 400\", function () {",
                   "  pm.response.to.have.status(400);",
                   "});"
                 ]
